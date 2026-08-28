@@ -1,0 +1,2612 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>BINGO GALAXY CABINET</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@600;900&family=M+PLUS+1p:wght@900&display=swap');
+
+  * { box-sizing: border-box; user-select: none; }
+  body {
+    background: #040810;
+    color: #00ffff;
+    font-family: 'Share Tech Mono', monospace;
+    margin: 0;
+    padding: 15px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .cabinet-frame {
+    width: 890px;
+    background: #0a0e17;
+    border-radius: 20px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.95), 0 0 20px rgba(0, 240, 255, 0.25);
+    border: 6px solid #223344;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  /* 上部ディスプレイ */
+  .top-screen {
+    width: 100%;
+    background: radial-gradient(circle at 50% 30%, #0c203d 0%, #030814 100%);
+    border-bottom: 5px solid #ffaa00;
+    padding: 10px 14px;
+    position: relative;
+  }
+
+  /* FEATURE スロット */
+  .features-top {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 8px;
+    width: 100%;
+  }
+  .feat-box {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    max-width: 92px;
+    background: rgba(4, 12, 24, 0.95);
+    border: 2.5px solid #005577;
+    border-radius: 10px;
+    padding: 5px 4px;
+    text-align: center;
+    color: #6699bb;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+    position: relative;
+    overflow: hidden;
+  }
+  .feat-box.active {
+    border-color: #ffd700;
+    background: radial-gradient(circle at 50% 30%, #201800 0%, #0a0e17 90%);
+    box-shadow: 0 0 14px rgba(255, 215, 0, 0.8), inset 0 0 8px rgba(255, 215, 0, 0.4);
+    color: #fff;
+  }
+  .feat-name {
+    font-size: 8.5px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    color: #88c0d0;
+    margin-top: 1px;
+    white-space: nowrap;
+  }
+  .feat-box.active .feat-name {
+    color: #ffd700;
+    text-shadow: 0 0 6px #ffd700;
+  }
+  .feature-payout {
+    position: absolute;
+    right: 4px;
+    bottom: 3px;
+    z-index: 3;
+    color: #ffd700;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 0 0 5px #ff9900;
+    white-space: nowrap;
+  }
+  
+  .feat-diagram-container {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1.5px solid rgba(0, 240, 255, 0.4);
+    border-radius: 6px;
+    margin: auto;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.9);
+  }
+  .f-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 7px);
+    grid-gap: 1.2px;
+  }
+  .f-dot { width: 7px; height: 7px; background: #1a2a3a; border-radius: 1px; }
+  .f-dot.on-yellow { background: #ffd700; box-shadow: 0 0 3px #ffd700; }
+  .f-dot.on-blue { background: #00ffff; box-shadow: 0 0 3px #00ffff; }
+  .f-dot.on-green { background: #00ff66; box-shadow: 0 0 3px #00ff66; }
+  .f-dot.on-red { background: #ff0055; box-shadow: 0 0 3px #ff0055; }
+  
+  .f-dot.split-green-blue { background: linear-gradient(90deg, #00ff66 50%, #00ffff 50%); }
+  .f-dot.split-green-yellow { background: linear-gradient(180deg, #00ff66 50%, #ffd700 50%); }
+  .f-dot.split-blue-red { background: linear-gradient(180deg, #00ffff 50%, #ff0055 50%); }
+  .f-dot.split-yellow-red { background: linear-gradient(90deg, #ffd700 50%, #ff0055 50%); }
+
+  .f-text-icon { font-size: 15px; font-family: 'Orbitron', sans-serif; font-weight: 900; }
+
+  .main-stage {
+    display: grid;
+    grid-template-columns: 200px 1fr 180px;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .cyber-panel {
+    background: rgba(4, 16, 34, 0.9);
+    border: 2px solid #00e5ff;
+    border-radius: 6px;
+    box-shadow: inset 0 0 8px rgba(0, 229, 255, 0.2);
+    padding: 6px;
+    position: relative;
+  }
+  .panel-header {
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    color: #00ffff;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #005577;
+    padding-bottom: 2px;
+    margin-bottom: 4px;
+    text-shadow: 0 0 6px #00ffff;
+  }
+
+  /* BONUS カードパネル */
+  .bonus-panel-wrap {
+    position: relative;
+  }
+
+  .bonus-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 34px);
+    grid-gap: 3px;
+    justify-content: center;
+    padding: 4px 0;
+    position: relative;
+    z-index: 2;
+  }
+  .b-cell {
+    width: 34px;
+    height: 34px;
+    background: #021124;
+    border: 1.5px solid #007799;
+    color: #ffd700;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    transition: all 0.2s;
+    position: relative;
+  }
+  /* BONUS 当選マーク: 黄色ブロック＋黒文字 */
+  .b-cell.hit {
+    background: linear-gradient(180deg, #fff033 0%, #ffbb00 100%) !important;
+    border-color: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: 0 0 10px #ffd700, inset 0 0 4px rgba(255, 255, 255, 0.8) !important;
+    text-shadow: none !important;
+  }
+
+  /* HISTORY ボールデザイン */
+  .history-box { margin-top: 6px; }
+  .current-balls {
+    display: flex;
+    justify-content: space-around;
+    background: rgba(0,0,0,0.6);
+    padding: 4px;
+    border: 1px solid #ffaa00;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+  .h-ball {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #111;
+    border: 2px solid #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 900;
+    font-family: 'Orbitron', sans-serif;
+    color: #fff;
+    box-sizing: border-box;
+    transition: all 0.3s;
+  }
+
+  .ball-green {
+    border-color: #00ff66 !important;
+    color: #ffffff !important;
+    background: radial-gradient(circle at 35% 35%, #00ff66 0%, #006622 80%) !important;
+    box-shadow: 0 0 10px rgba(0, 255, 102, 0.7);
+    text-shadow: 0 1px 2px #000;
+  }
+  .ball-yellow {
+    border-color: #ffd700 !important;
+    color: #000000 !important;
+    background: radial-gradient(circle at 35% 35%, #ffff33 0%, #ff9900 80%) !important;
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.9);
+    text-shadow: 0 1px 1px rgba(255,255,255,0.6);
+  }
+  .ball-red {
+    border-color: #ff3344 !important;
+    color: #ffffff !important;
+    background: radial-gradient(circle at 35% 35%, #ff4455 0%, #990011 80%) !important;
+    box-shadow: 0 0 12px rgba(255, 51, 68, 0.9);
+    text-shadow: 0 1px 2px #000;
+  }
+
+  .h-ball.rolling { animation: pulse 0.25s infinite alternate; }
+
+  .history-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .history-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0,0,0,0.35);
+    padding: 2px 4px;
+    border-radius: 4px;
+  }
+  .history-row-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    color: #88c0d0;
+    width: 14px;
+  }
+  .history-balls-wrap {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+    justify-content: space-around;
+  }
+  .mini-h-ball {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 900;
+    font-family: 'Orbitron', sans-serif;
+    border: 1.5px solid #555;
+    background: #111;
+  }
+
+  @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.7; } 100% { transform: scale(1.15); opacity: 1; } }
+
+  /* 中央 GALAXY 盤面 */
+  .center-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  .galaxy-outer-frame {
+    position: relative;
+    padding: 34px 46px 42px 46px;
+    background: radial-gradient(circle, #09203f 0%, #010814 100%);
+    border: 3px solid #00f0ff;
+    border-radius: 14px;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.45), inset 0 0 15px rgba(0,0,0,0.8);
+  }
+
+  .galaxy-title {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00aaff;
+  }
+
+  #hudSvgOverlay,
+  #lineSvgOverlay,
+  #superLineSvgOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+    transition: opacity 0.3s ease;
+  }
+
+  #superLineSvgOverlay { z-index: 5; }
+  #lineSvgOverlay { z-index: 4; }
+  #hudSvgOverlay { z-index: 8; }
+  #hitNumberOverlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 7;
+  }
+  .hit-number-overlay {
+    position: absolute;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    transition: transform 0.18s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .hud-zone-tag {
+    position: absolute;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: #39ff14;
+    text-shadow: 0 0 8px #39ff14, 0 0 15px #00ff66;
+    border: 2px solid #39ff14;
+    border-radius: 4px;
+    background: rgba(0, 20, 0, 0.85);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 6;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.4);
+    transition: opacity 0.3s ease;
+  }
+  .tag-a { top: 40px; left: 10px; }
+  .tag-b { top: 100px; right: 10px; }
+  .tag-c { bottom: 85px; left: 10px; }
+  .tag-d { bottom: 42px; right: 10px; }
+
+  .bingo-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 52px);
+    grid-gap: 6px;
+    position: relative;
+    z-index: 6;
+  }
+
+  /* GALAXY 通常マス目カラー */
+  .cell {
+    width: 52px;
+    height: 52px;
+    background: rgba(2, 16, 32, 0.50);
+    border: 2px solid #00e5ff;
+    color: #39ff14;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    clip-path: polygon(7px 0%, calc(100% - 7px) 0%, 100% 7px, 100% calc(100% - 7px), calc(100% - 7px) 100%, 7px 100%, 0% calc(100% - 7px), 0% 7px);
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+    text-shadow: 0 0 6px #00ff66;
+  }
+
+  /* GALAXY 当選マーク: 黄色ブロック ＋ 黒文字 */
+  .cell.hit {
+    background: linear-gradient(180deg, #fff033 0%, #ffbb00 100%) !important;
+    border-color: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: 0 0 16px #ffd700, inset 0 0 6px rgba(255, 255, 255, 0.9) !important;
+    text-shadow: none !important;
+  }
+  .cell.hit { color: transparent !important; }
+
+  .cell.sliding {
+    z-index: 10;
+    transition: transform 0.18s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  /* GALAXY盤面下部中央 ODDSx2 / ODDSx3 インジケータ */
+  .galaxy-bottom-odds-badge {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    background: #000;
+    border: 2px solid #005577;
+    border-radius: 6px;
+    padding: 2px 4px;
+    gap: 4px;
+    z-index: 10;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+  }
+  .g-odds-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 2px 10px;
+    border-radius: 4px;
+    color: #333;
+    border: 1px solid #222;
+    transition: all 0.3s;
+  }
+  .g-odds-x2.active {
+    background: linear-gradient(180deg, #ff9900 0%, #cc5500 100%);
+    color: #000;
+    border-color: #ffbb00;
+    box-shadow: 0 0 10px #ff9900;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+  }
+  .g-odds-x3.active {
+    background: linear-gradient(180deg, #ff2200 0%, #aa0000 100%);
+    color: #fff;
+    border-color: #ff4444;
+    box-shadow: 0 0 12px #ff2200;
+    text-shadow: 0 1px 2px #000;
+  }
+
+  /* 盤面中央 BET受付中 正面HUD */
+  .bet-front-notice {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 30;
+    background: rgba(0, 8, 20, 0.92);
+    border: 2px solid #00f0ff;
+    border-radius: 8px;
+    padding: 8px 18px;
+    box-shadow: 0 0 24px rgba(0, 240, 255, 0.85);
+  }
+  .bet-front-title {
+    font-family: 'M PLUS 1p', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 0 8px #00f0ff;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .bet-front-timer {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700;
+    line-height: 1.1;
+  }
+
+  /* RIDE GAME センター倍率ルーレットHUD */
+  .ride-roulette-notice {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 35;
+    background: rgba(30, 0, 10, 0.95);
+    border: 3px solid #ff0055;
+    border-radius: 12px;
+    padding: 12px 24px;
+    box-shadow: 0 0 30px rgba(255, 0, 85, 0.9);
+  }
+  .ride-roulette-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    color: #ffd700;
+    text-shadow: 0 0 8px #ffd700;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .ride-roulette-mult {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 38px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 0 15px #ff0055, 0 0 25px #ffffff;
+  }
+
+  .feature-result-notice {
+    position: absolute;
+    inset: -7.5px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    padding: 4px 2px;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 70%, rgba(20, 70, 30, 0.7) 0%, rgba(0, 8, 20, 0.97) 62%);
+    border: 2px solid #39ff14;
+    border-radius: 8px;
+    box-shadow: 0 0 24px rgba(57, 255, 20, 0.8);
+    pointer-events: none;
+    z-index: 40;
+    animation: featureResultIn 0.22s ease-out;
+  }
+  .feature-result-notice::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    background:
+      linear-gradient(#ffffff, #ffffff) left top / 12px 2px no-repeat,
+      linear-gradient(#ffffff, #ffffff) left top / 2px 12px no-repeat,
+      linear-gradient(#ffffff, #ffffff) right top / 12px 2px no-repeat,
+      linear-gradient(#ffffff, #ffffff) right top / 2px 12px no-repeat,
+      linear-gradient(#ffffff, #ffffff) left bottom / 12px 2px no-repeat,
+      linear-gradient(#ffffff, #ffffff) left bottom / 2px 12px no-repeat,
+      linear-gradient(#ffffff, #ffffff) right bottom / 12px 2px no-repeat,
+      linear-gradient(#ffffff, #ffffff) right bottom / 2px 12px no-repeat;
+    opacity: 0.9;
+  }
+  .feature-result-title {
+    position: relative;
+    z-index: 1;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0;
+    line-height: 1.05;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .feature-result-mark {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    height: 25px;
+    border: 2px solid #39ff14;
+    border-radius: 50%;
+    font-family: 'M PLUS 1p', sans-serif;
+    font-size: 19px;
+    font-weight: 900;
+    line-height: 1;
+    background: rgba(0, 20, 0, 0.65);
+  }
+  .feature-result-notice.failed .feature-result-mark {
+    border-radius: 4px;
+    background: rgba(60, 0, 8, 0.7);
+  }
+  .feature-result-notice.failed {
+    border-color: #ff3344;
+    box-shadow: 0 0 24px rgba(255, 51, 68, 0.8);
+  }
+  .feature-result-notice.failed .feature-result-title,
+  .feature-result-notice.failed .feature-result-mark {
+    color: #ff3344;
+    text-shadow: 0 0 8px #ff3344;
+  }
+  .feature-result-notice:not(.failed) .feature-result-title,
+  .feature-result-notice:not(.failed) .feature-result-mark {
+    color: #39ff14;
+    text-shadow: 0 0 8px #39ff14;
+  }
+  @keyframes featureResultIn {
+    from { opacity: 0; transform: scale(0.88); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* 最前面リーチレイヤー (GALAXY & BONUS) */
+  #reachLayer, #bonusReachLayer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 20;
+  }
+
+  .reach-marker-container {
+    position: absolute;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* BONUS用の小型リーチマーカー */
+  .bonus-reach-marker {
+    width: 34px !important;
+    height: 34px !important;
+  }
+  .bonus-reach-marker .reach-circle {
+    width: 30px !important;
+    height: 30px !important;
+  }
+  .bonus-reach-marker .reach-circle::after { height: 38px !important; }
+  .bonus-reach-marker .reach-circle::before { width: 38px !important; }
+  .bonus-reach-marker .reach-banner {
+    font-size: 8px !important;
+    padding: 0 3px !important;
+    top: -11px !important;
+  }
+
+  .reach-circle {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border: 3px solid #ff4500;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #ff5500, inset 0 0 8px rgba(255, 69, 0, 0.5);
+    animation: rotateTarget 4s linear infinite;
+  }
+  .reach-circle::after {
+    content: '';
+    position: absolute;
+    top: -5px; left: 50%;
+    width: 2px; height: 58px;
+    background: #ff5500;
+    transform: translateX(-50%);
+    box-shadow: 0 0 4px #ff3300;
+  }
+  .reach-circle::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: -5px;
+    width: 58px; height: 2px;
+    background: #ff5500;
+    transform: translateY(-50%);
+    box-shadow: 0 0 4px #ff3300;
+  }
+
+  .reach-banner {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #ffffff;
+    background: linear-gradient(180deg, #ff3300 0%, #aa0000 100%);
+    border: 1.5px solid #ffff00;
+    padding: 1px 6px;
+    border-radius: 4px;
+    text-shadow: 0 0 4px #fff, 0 0 8px #ff2200;
+    box-shadow: 0 0 10px rgba(255, 50, 0, 1);
+    white-space: nowrap;
+    animation: pulse 0.4s infinite alternate;
+    z-index: 25;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+  .reach-banner.fade-out { opacity: 0; visibility: hidden; }
+
+  @keyframes rotateTarget { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* 下部インフォメーション欄 */
+  .center-bottom-status {
+    display: flex;
+    margin-top: 8px;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+  }
+  .ball-phase-text {
+    font-size: 13px;
+    color: #ffd700;
+    font-weight: bold;
+    font-family: 'M PLUS 1p', 'Orbitron', sans-serif;
+    min-width: 280px;
+    text-align: center;
+    text-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+  }
+
+  /* 右側 ODDS表 */
+  .odds-table-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .odds-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 11px; }
+  .odds-table td { padding: 3.5px 1px; border: 1px solid #003355; color: #00e5ff; font-family: 'Orbitron', sans-serif; }
+
+  .odds-max-header {
+    background: rgba(255, 0, 128, 0.2);
+    border: 2px solid #ff0080;
+    box-shadow: 0 0 8px rgba(255, 0, 128, 0.5);
+    border-radius: 4px;
+    margin-bottom: 3px;
+  }
+  .odds-max-header td {
+    color: #ff66cc !important;
+    font-weight: 900;
+    font-size: 12px;
+    padding: 4px 1px;
+    border: none !important;
+    text-shadow: 0 0 5px #ff0080;
+  }
+
+  .odds-row-highlight {
+    background: rgba(255, 150, 0, 0.4) !important;
+    border: 2px solid #ffaa00 !important;
+    box-shadow: inset 0 0 6px #ffaa00, 0 0 8px #ffaa00 !important;
+  }
+  .odds-row-highlight td {
+    color: #ffffff !important;
+    font-weight: 900;
+    text-shadow: 0 0 6px #fff;
+  }
+
+  .screen-counter-bar {
+    margin-top: 6px;
+    background: #000;
+    border: 1px solid #00ffff;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-around;
+    padding: 4px;
+    font-size: 12px;
+  }
+  .screen-counter-bar span { color: #ffd700; font-family: 'Orbitron', sans-serif; }
+
+  /* 下部コントロールパネル */
+  .bottom-control-panel {
+    width: 100%;
+    background: linear-gradient(180deg, #fbc02d 0%, #f57f17 100%);
+    padding: 12px 25px;
+    border-top: 4px solid #fff;
+    box-shadow: inset 0 6px 10px rgba(0,0,0,0.3);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .panel-left-deco { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .brand-logo { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: #331500; letter-spacing: 2px; }
+
+  /* 中央 ROTATION 操作卓 */
+  .rot-deck {
+    background: rgba(0,0,0,0.18);
+    padding: 8px 14px;
+    border-radius: 12px;
+    border: 2px solid #d46b08;
+    text-align: center;
+    justify-self: center;
+  }
+  .rot-deck-title { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 11px; color: #2b1100; letter-spacing: 2px; margin-bottom: 4px; }
+  .rot-buttons-grid { display: grid; grid-template-columns: 50px 50px; gap: 8px; }
+  .btn-arcade-rot {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffffff 0%, #e0e0e0 60%, #9e9e9e 100%);
+    border: 3px solid #616161;
+    box-shadow: 0 5px 0 #424242, 0 6px 6px rgba(0,0,0,0.4);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    color: #1976d2;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.05s, box-shadow 0.05s;
+  }
+  .btn-arcade-rot:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 1px 0 #424242; }
+  .btn-arcade-rot:disabled {
+    background: #555 !important;
+    color: #888 !important;
+    border-color: #777 !important;
+    box-shadow: none !important;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  /* 右側 BET & START */
+  .action-deck { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; justify-self: end; }
+  .action-buttons-row { display: flex; gap: 10px; }
+  .btn-arcade-action {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.5);
+    transition: transform 0.05s;
+  }
+  .btn-arcade-action:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 1px 0 rgba(0,0,0,0.5); }
+  .btn-arcade-action:disabled { background: #757575 !important; border-color: #9e9e9e !important; box-shadow: none !important; cursor: not-allowed; opacity: 0.6; }
+  .btn-blue { background: radial-gradient(circle at 35% 35%, #29b6f6 0%, #0288d1 70%, #01579b 100%); box-shadow: 0 5px 0 #013a68; }
+  .btn-red { background: radial-gradient(circle at 35% 35%, #ff5252 0%, #d32f2f 70%, #b71c1c 100%); box-shadow: 0 5px 0 #7f0000; }
+  .btn-green { background: radial-gradient(circle at 35% 35%, #69f0ae 0%, #00c853 70%, #007e33 100%); color: #003311; box-shadow: 0 0 4px #004d1a; }
+</style>
+</head>
+<body>
+
+<div class="cabinet-frame">
+
+  <!-- 【上部】メインディスプレイ -->
+  <div class="top-screen">
+
+    <!-- フィーチャースロット -->
+    <div class="features-top">
+      <div class="feat-box" id="feat-move">
+        <div class="feat-name" id="name-move">NORMAL</div>
+        <div class="feat-diagram-container" id="diagram-move"></div>
+      </div>
+      <div class="feat-box" id="feat-special">
+        <div class="feat-name" id="name-special">NONE</div>
+        <div class="feat-diagram-container" id="diagram-special"></div>
+        <div class="feature-payout" id="specialPayout"></div>
+      </div>
+      <div class="feat-box" id="feat-green">
+        <div class="feat-name" id="name-green">NONE</div>
+        <div class="feat-diagram-container" id="diagram-green"></div>
+      </div>
+      <div class="feat-box" id="feat-yellow">
+        <div class="feat-name" id="name-yellow">NONE</div>
+        <div class="feat-diagram-container" id="diagram-yellow"></div>
+      </div>
+      <div class="feat-box" id="feat-red">
+        <div class="feat-name" id="name-red">NONE</div>
+        <div class="feat-diagram-container" id="diagram-red"></div>
+      </div>
+    </div>
+
+    <div class="main-stage">
+      <!-- 左: BONUS & HISTORY -->
+      <div class="left-col">
+        <div class="cyber-panel bonus-panel-wrap" id="bonusPanelWrap">
+          <div class="panel-header">BONUS</div>
+          <div id="bonusReachLayer"></div>
+          <div class="bonus-grid" id="bonusGrid"></div>
+        </div>
+
+        <div class="cyber-panel history-box">
+          <div class="panel-header">HISTORY</div>
+          <div class="current-balls">
+            <div class="h-ball" id="b-0">-</div>
+            <div class="h-ball" id="b-1">-</div>
+            <div class="h-ball" id="b-2">-</div>
+            <div class="h-ball" id="b-3">-</div>
+            <div class="h-ball" id="b-4">-</div>
+          </div>
+          <div class="history-list-container" id="historyListContainer"></div>
+        </div>
+      </div>
+
+      <!-- 中央: GALAXY 盤面 -->
+      <div class="center-panel">
+        <div class="galaxy-outer-frame" id="galaxyOuterFrame">
+          <div class="galaxy-title">GALAXY</div>
+          
+          <div class="hud-zone-tag tag-a" id="tag-a">A</div>
+          <div class="hud-zone-tag tag-b" id="tag-b">B</div>
+          <div class="hud-zone-tag tag-c" id="tag-c">C</div>
+          <div class="hud-zone-tag tag-d" id="tag-d">D</div>
+
+          <svg id="hudSvgOverlay"></svg>
+          <svg id="superLineSvgOverlay"></svg>
+          <svg id="lineSvgOverlay"></svg>
+          <div id="hitNumberOverlay"></div>
+          <div id="reachLayer"></div>
+          <div class="bingo-grid" id="bingoGrid"></div>
+
+          <!-- GALAXY盤面下部中央 ODDSx2 / ODDSx3 インジケータ -->
+          <div class="galaxy-bottom-odds-badge">
+            <div class="g-odds-btn g-odds-x2" id="gBadgeX2">ODDSx2</div>
+            <div class="g-odds-btn g-odds-x3" id="gBadgeX3">ODDSx3</div>
+          </div>
+
+          <!-- BET受付中 正面HUD -->
+          <div class="bet-front-notice" id="betFrontNotice">
+            <div class="bet-front-title">◀ ベット受付中 ▶</div>
+            <div class="bet-front-timer"><span style="font-size: 12px;">あと</span> <span id="frontCountdown">30</span> <span style="font-size: 12px;">秒</span></div>
+          </div>
+
+          <!-- RIDE GAME 倍率抽選ルーレットHUD -->
+          <div class="ride-roulette-notice" id="rideRouletteNotice">
+            <div class="ride-roulette-title">RIDE MULTIPLIER</div>
+            <div class="ride-roulette-mult" id="rideRouletteValue">x2.0</div>
+          </div>
+
+        </div>
+
+        <div class="center-bottom-status">
+          <div class="ball-phase-text" id="ballPhaseText">BET PLEASE (30s)</div>
+        </div>
+      </div>
+
+      <!-- 右: ODDS 表 -->
+      <div class="cyber-panel">
+        <div class="panel-header" id="oddsPanelHeader">ODDS</div>
+        <div class="odds-table-container">
+          <table class="odds-table odds-max-header" id="oddsMaxHeader">
+            <tbody>
+              <tr><td style="width:33%;">300</td><td style="width:33%;">900</td><td style="width:34%;">2400</td></tr>
+            </tbody>
+          </table>
+          
+          <table class="odds-table">
+            <tbody id="oddsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- カウンター -->
+    <div class="screen-counter-bar">
+      <div>BET: <span id="disp-bet">0</span></div>
+      <div>WIN: <span id="disp-win">0</span></div>
+      <div>CREDIT: <span id="disp-credit">100</span></div>
+    </div>
+  </div>
+
+  <!-- 【下部】コントロールパネル -->
+  <div class="bottom-control-panel">
+    <div class="panel-left-deco">
+      <div class="brand-logo">BINGO GALAXY</div>
+      <button class="btn-arcade-action btn-red" id="btn-ride" onclick="startRideGame()" style="display:none; width: 130px; border-radius: 8px; height: 32px;">
+        RIDE GAME
+      </button>
+    </div>
+
+    <div class="rot-deck">
+      <div class="rot-deck-title">ROTATION</div>
+      <div class="rot-buttons-grid">
+        <button class="btn-arcade-rot" id="rot-btn-a" onclick="rotateZone('UL')">A</button>
+        <button class="btn-arcade-rot" id="rot-btn-b" onclick="rotateZone('UR')">B</button>
+        <button class="btn-arcade-rot" id="rot-btn-c" onclick="rotateZone('DL')">C</button>
+        <button class="btn-arcade-rot" id="rot-btn-d" onclick="rotateZone('DR')">D</button>
+      </div>
+    </div>
+
+    <div class="action-deck">
+      <div class="action-buttons-row">
+        <button class="btn-arcade-action btn-blue" id="btn-bet1" onclick="addBet(1)"><span>BET</span><span>1</span></button>
+        <button class="btn-arcade-action btn-red" id="btn-bet10" onclick="addBet(10)"><span>BET</span><span>10</span></button>
+        <button class="btn-arcade-action btn-green" id="btn-start" onclick="startGame()"><span>START</span></button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let credit = 10000;
+let bet = 0;
+let oddsValue = 10;
+let lastWin = 0;
+let gamePhase = "BETTING";
+let gameMode = "NORMAL";
+let rideMultiplier = 2.0;
+let isAnimating = false;
+let betTimer = null;
+let rotationTimer = null;
+let canRotate = true;
+
+let grid = [];
+let bonusGrid = Array(5).fill(null).map(() => Array(5).fill(false));
+let bonusNumbers = [];
+
+let superLineIndices = [];
+let hyperLineIndices = [];
+
+let drawnBallsData = [];
+let pastHistoryData = [];
+
+let reachFadeTimer = null;
+let bonusReachFadeTimer = null;
+const REACH_LABEL_DURATION = 2500;
+
+let features = {
+  MOVE: 0,
+  SPECIAL: 0,
+  GREEN: 0,
+  YELLOW: 0,
+  RED: 0
+};
+
+let featureBranches = {
+  SPECIAL: null,
+  GREEN: null,
+  YELLOW: null,
+  RED: null
+};
+
+const FEAT_NAMES = {
+  MOVE: ["NORMAL", "5-SPOTS", "4-DIAMOND"],
+  SPECIAL: ["NONE", "4-CORNER", "HI 4-CORNER", "SLASH", "FULL SLASH"],
+  GREEN: ["NONE", "BONUS FREE", "BONUS CENTER", "SUPER LINE+", "HYPER LINE"],
+  YELLOW: ["NONE", "ODDS UP", "SUPER ODDS UP", "W.NUMBERS", "T.NUMBERS"],
+  RED: ["NONE", "RED LENGTH", "RED X", "RED SIDE", "RED CROSS"]
+};
+
+const FEATURE_BRANCH_NAMES = {
+  SPECIAL: { CORNER: ["4-CORNER", "HI 4-CORNER"], SLASH: ["SLASH", "FULL SLASH"] },
+  GREEN: { BONUS: ["BONUS FREE", "BONUS CENTER"], LINE: ["SUPER LINE+", "HYPER LINE"] },
+  YELLOW: { ODDS: ["ODDS UP", "SUPER ODDS UP"], NUMBERS: ["W.NUMBERS", "T.NUMBERS"] },
+  RED: { LENGTH: ["RED LENGTH", "RED X"], SIDE: ["RED SIDE", "RED CROSS"] }
+};
+
+const INITIAL_BONUS_OPEN_COUNT = 5;
+
+function getFeatureName(key, level) {
+  if (level === 0) return "NONE";
+  if (key === "MOVE") return FEAT_NAMES[key][level];
+  const branch = featureBranches[key];
+  if (!branch) return FEAT_NAMES[key][level];
+  const names = FEATURE_BRANCH_NAMES[key][branch];
+  const nameIndex = level >= 3 ? level - 3 : level - 1;
+  return names ? names[nameIndex] : FEAT_NAMES[key][level];
+}
+
+const STEP_SIZE = 58;
+
+const isGreenSpot = (num) => (num % 5 !== 0);
+const isYellowRedSpot = (num) => (num % 5 === 0);
+
+function init() {
+  initGrid();
+  initBonusCard();
+  resetLinesToDefault();
+  renderOddsTable();
+  renderGrid();
+  renderBonusGrid();
+  renderHistory();
+  setHudZoneVisibility(true);
+  updateUI();
+  startBetCountdown();
+}
+
+function initGrid() {
+  let nums = Array.from({length: 25}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+  grid = [];
+  for (let r = 0; r < 5; r++) {
+    let row = [];
+    for (let c = 0; c < 5; c++) {
+      row.push({ num: nums[r * 5 + c], hit: false });
+    }
+    grid.push(row);
+  }
+}
+
+function initBonusCard() {
+  let nums = Array.from({length: 25}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+  bonusNumbers = [];
+  for (let r = 0; r < 5; r++) {
+    bonusNumbers.push(nums.slice(r * 5, r * 5 + 5));
+  }
+
+  bonusGrid = createInitialBonusGrid();
+}
+
+function createInitialBonusGrid() {
+  const positions = Array.from({length: 25}, (_, index) => index);
+
+  for (let attempt = 0; attempt < 1000; attempt++) {
+    const shuffled = positions.slice().sort(() => Math.random() - 0.5);
+    const candidate = Array(5).fill(null).map(() => Array(5).fill(false));
+    shuffled.slice(0, INITIAL_BONUS_OPEN_COUNT).forEach(index => {
+      candidate[Math.floor(index / 5)][index % 5] = true;
+    });
+
+    const previousGrid = bonusGrid;
+    bonusGrid = candidate;
+    const isBingo = checkBonusGame();
+    bonusGrid = previousGrid;
+    if (!isBingo) return candidate;
+  }
+
+  const fallback = Array(5).fill(null).map(() => Array(5).fill(false));
+  [[0,0], [0,1], [1,2], [2,3], [3,4]].forEach(([r, c]) => {
+    fallback[r][c] = true;
+  });
+  return fallback;
+}
+
+function resetLinesToDefault() {
+  hyperLineIndices = [];
+  superLineIndices = getRandomLineIndices(2);
+}
+
+function getRandomLineIndices(count) {
+  const availableIndices = Array.from({length: 12}, (_, index) => index);
+  const shuffled = availableIndices.sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
+function setHudZoneVisibility(visible) {
+  let opacity = visible ? "1" : "0";
+  ["tag-a", "tag-b", "tag-c", "tag-d"].forEach(id => {
+    let el = document.getElementById(id);
+    if (el) el.style.opacity = opacity;
+  });
+  let svg = document.getElementById("hudSvgOverlay");
+  if (svg) svg.style.opacity = opacity;
+}
+
+function renderOddsTable() {
+  const tbody = document.getElementById("oddsTableBody");
+  const maxHeader = document.getElementById("oddsMaxHeader");
+  const panelHeader = document.getElementById("oddsPanelHeader");
+  tbody.innerHTML = "";
+
+  if (gameMode === "RIDE") {
+    panelHeader.innerText = `RIDE [x${rideMultiplier}]`;
+    maxHeader.style.display = "none";
+
+    let tr = document.createElement("tr");
+    tr.className = "odds-row-highlight";
+    tr.innerHTML = `<td>${oddsValue}</td><td>${oddsValue * 3}</td><td>${oddsValue * 8}</td>`;
+    tbody.appendChild(tr);
+    return;
+  }
+
+  panelHeader.innerText = "ODDS";
+  let minVal, maxVal;
+  if (oddsValue <= 100) {
+    minVal = 10; maxVal = 100;
+    maxHeader.style.display = "table";
+  } else if (oddsValue <= 200) {
+    minVal = 110; maxVal = 200;
+    maxHeader.style.display = "table";
+  } else {
+    minVal = 210; maxVal = 300;
+    maxHeader.style.display = "none";
+  }
+
+  for (let val = maxVal; val >= minVal; val -= 10) {
+    let tr = document.createElement("tr");
+    tr.id = `odds-row-${val}`;
+    tr.setAttribute("data-val", val);
+    if (val === oddsValue) {
+      tr.className = "odds-row-highlight";
+    }
+    tr.innerHTML = `<td>${val}</td><td>${val * 3}</td><td>${val * 8}</td>`;
+    tbody.appendChild(tr);
+  }
+}
+
+function startBetCountdown() {
+  clearInterval(betTimer);
+  let timeLeft = 30;
+  
+  document.getElementById("frontCountdown").innerText = timeLeft;
+  document.getElementById("betFrontNotice").style.display = "flex";
+  document.getElementById("ballPhaseText").innerText = `BET PLEASE (${timeLeft}s)`;
+
+  betTimer = setInterval(() => {
+    if (gamePhase === "BETTING") {
+      timeLeft--;
+      document.getElementById("frontCountdown").innerText = timeLeft;
+
+      if (bet > 0) {
+        document.getElementById("ballPhaseText").innerText = `BET TIME: 残り ${timeLeft} 秒`;
+      } else {
+        document.getElementById("ballPhaseText").innerText = `BET PLEASE (${timeLeft}s)`;
+      }
+
+      if (timeLeft <= 0) {
+        clearInterval(betTimer);
+        document.getElementById("betFrontNotice").style.display = "none";
+        startGame();
+      }
+    }
+  }, 1000);
+}
+
+function setRotationButtonsState(enabled) {
+  canRotate = enabled;
+  ["a", "b", "c", "d"].forEach(k => {
+    document.getElementById(`rot-btn-${k}`).disabled = !enabled;
+  });
+}
+
+function showFeatureResult(success, targetCat) {
+  const targetBox = document.getElementById(`feat-${targetCat.toLowerCase()}`);
+  if (!targetBox) return;
+
+  const noticeId = `featureResultNotice-${targetCat}`;
+  let notice = document.getElementById(noticeId);
+  if (!notice) {
+    notice = document.createElement("div");
+    notice.id = noticeId;
+    notice.className = "feature-result-notice";
+    notice.innerHTML = `
+      <div class="feature-result-title" id="featureResultTitle"></div>
+      <div class="feature-result-mark" id="featureResultMark"></div>`;
+  }
+  targetBox.appendChild(notice);
+
+  if (notice.dataset.result === "failed" && success) return;
+
+  const title = notice.querySelector(".feature-result-title");
+  const mark = notice.querySelector(".feature-result-mark");
+  notice.classList.toggle("failed", !success);
+  title.innerHTML = success ? "FEATURE<br>SUCCESSED" : "FEATURE<br>FAILED";
+  mark.innerText = success ? "○" : "×";
+  notice.dataset.result = success ? "success" : "failed";
+  notice.style.display = "flex";
+
+}
+
+function clearFeatureResult() {
+  document.querySelectorAll("[id^='featureResultNotice-']").forEach(notice => {
+    notice.style.display = "none";
+    delete notice.dataset.result;
+  });
+}
+
+function clearSpecialPayout() {
+  document.getElementById("specialPayout").innerText = "";
+}
+
+function updateSpecialPayout() {
+  const payout = document.getElementById("specialPayout");
+  if (featureBranches.SPECIAL !== "CORNER" || features.SPECIAL === 0) {
+    payout.innerText = "";
+    return;
+  }
+
+  const multiplier = features.SPECIAL === 2 ? 6 : 3;
+  payout.innerText = oddsValue * multiplier;
+}
+
+function getZoneCoords(zoneKey) {
+  if (features.MOVE === 1) {
+    switch (zoneKey) {
+      case 'UL': return [[0,0], [0,1], [1,1], [2,0], [1,0]];
+      case 'UR': return [[0,2], [0,3], [0,4], [1,4], [1,3]];
+      case 'DL': return [[3,0], [3,1], [4,2], [4,1], [4,0]];
+      case 'DR': return [[2,4], [3,4], [4,4], [4,3], [3,3]];
+    }
+  } else if (features.MOVE === 2) {
+    switch (zoneKey) {
+      case 'UL': return [[0,1], [1,2], [2,1], [1,0]];
+      case 'UR': return [[0,3], [1,4], [2,3], [1,2]];
+      case 'DL': return [[2,1], [3,2], [4,1], [3,0]];
+      case 'DR': return [[2,3], [3,4], [4,3], [3,2]];
+    }
+  } else {
+    switch (zoneKey) {
+      case 'UL': return [[0,0], [0,1], [1,1], [1,0]];
+      case 'UR': return [[0,3], [0,4], [1,4], [1,3]];
+      case 'DL': return [[3,0], [3,1], [4,1], [4,0]];
+      case 'DR': return [[3,3], [3,4], [4,4], [4,3]];
+    }
+  }
+}
+
+function getAllLines() {
+  let lines = [];
+  for (let i = 0; i < 5; i++) lines.push([0,1,2,3,4].map(c => ({r: i, c})));
+  for (let i = 0; i < 5; i++) lines.push([0,1,2,3,4].map(r => ({r, c: i})));
+  lines.push([0,1,2,3,4].map(i => ({r: i, c: i})));
+  lines.push([0,1,2,3,4].map(i => ({r: i, c: 4 - i})));
+
+  if (featureBranches.SPECIAL === "SLASH" && features.SPECIAL >= 3) {
+    lines.push([[0,1],[1,2],[2,3],[3,4]].map(([r,c]) => ({r, c})));
+    lines.push([[1,0],[2,1],[3,2],[4,3]].map(([r,c]) => ({r, c})));
+    lines.push([[0,3],[1,2],[2,1],[3,0]].map(([r,c]) => ({r, c})));
+    lines.push([[1,4],[2,3],[3,2],[4,1]].map(([r,c]) => ({r, c})));
+  }
+  if (featureBranches.SPECIAL === "SLASH" && features.SPECIAL >= 4) {
+    lines.push([[0,2],[1,3],[2,4]].map(([r,c]) => ({r, c})));
+    lines.push([[2,0],[3,1],[4,2]].map(([r,c]) => ({r, c})));
+    lines.push([[0,2],[1,1],[2,0]].map(([r,c]) => ({r, c})));
+    lines.push([[2,4],[3,3],[4,2]].map(([r,c]) => ({r, c})));
+  }
+  return lines;
+}
+
+function getMaxConsecutiveHits(line, targetGrid) {
+  let maxRun = 0, currentRun = 0;
+  for (let pos of line) {
+    if (targetGrid[pos.r][pos.c].hit) {
+      currentRun++;
+      if (currentRun > maxRun) maxRun = currentRun;
+    } else {
+      currentRun = 0;
+    }
+  }
+  return maxRun;
+}
+
+function getReachSpots() {
+  let reachCoords = [];
+  let lines = getAllLines();
+  let currentLineMaxes = lines.map(line => getMaxConsecutiveHits(line, grid));
+
+  for (let r = 0; r < 5; r++) {
+    for (let c = 0; c < 5; c++) {
+      if (grid[r][c].hit) continue;
+
+      let isReach = false;
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+        if (!line.some(pos => pos.r === r && pos.c === c)) continue;
+
+        grid[r][c].hit = true;
+        let newMax = getMaxConsecutiveHits(line, grid);
+        grid[r][c].hit = false;
+
+        if (newMax >= 3 && newMax > currentLineMaxes[i]) {
+          isReach = true;
+          break;
+        }
+      }
+
+      if (!isReach && featureBranches.SPECIAL === "CORNER" && features.SPECIAL >= 1) {
+        let corners = [[0,0], [0,4], [4,0], [4,4]];
+        let isCorner = corners.some(([cr, cc]) => cr === r && cc === c);
+        if (isCorner) {
+          let otherCornersHit = corners.filter(([cr, cc]) => !(cr === r && cc === c) && grid[cr][cc].hit).length;
+          if (otherCornersHit === 3) {
+            isReach = true;
+          }
+        }
+      }
+
+      if (isReach) {
+        reachCoords.push({ r, c });
+      }
+    }
+  }
+
+  return reachCoords;
+}
+
+/* =================================================================
+   【BONUS用 リーチ判定ロジック】5マス並びであと1マスの箇所を検出
+================================================================= */
+function getBonusReachSpots() {
+  let reachCoords = [];
+  let lines = getBonusLines();
+
+  lines.forEach(line => {
+    let hitCount = line.filter(pos => bonusGrid[pos.r][pos.c]).length;
+    if (hitCount === 4) {
+      let missing = line.find(pos => !bonusGrid[pos.r][pos.c]);
+      if (missing && !reachCoords.some(p => p.r === missing.r && p.c === missing.c)) {
+        reachCoords.push(missing);
+      }
+    }
+  });
+
+  return reachCoords;
+}
+
+function getBonusLines() {
+  let lines = [];
+  for (let i = 0; i < 5; i++) lines.push([0,1,2,3,4].map(c => ({r: i, c})));
+  for (let i = 0; i < 5; i++) lines.push([0,1,2,3,4].map(r => ({r, c: i})));
+  lines.push([0,1,2,3,4].map(i => ({r: i, c: i})));
+  lines.push([0,1,2,3,4].map(i => ({r: i, c: 4 - i})));
+  return lines;
+}
+
+function updateReachDisplay() {
+  const layer = document.getElementById("reachLayer");
+  const outer = document.getElementById("galaxyOuterFrame").getBoundingClientRect();
+  layer.innerHTML = "";
+  clearTimeout(reachFadeTimer);
+
+  if (gamePhase === "FINISHED") return;
+
+  let reachSpots = getReachSpots();
+  if (reachSpots.length === 0) return;
+
+  reachSpots.forEach(pos => {
+    let cell = document.getElementById(`cell-${pos.r}-${pos.c}`);
+    if (cell) {
+      let cr = cell.getBoundingClientRect();
+      let left = cr.left - outer.left;
+      let top = cr.top - outer.top;
+
+      let markerContainer = document.createElement("div");
+      markerContainer.className = "reach-marker-container active";
+      markerContainer.style.left = `${left}px`;
+      markerContainer.style.top = `${top}px`;
+
+      let circle = document.createElement("div");
+      circle.className = "reach-circle";
+
+      let banner = document.createElement("div");
+      banner.className = "reach-banner";
+      banner.innerText = "REACH";
+
+      markerContainer.appendChild(circle);
+      markerContainer.appendChild(banner);
+      layer.appendChild(markerContainer);
+    }
+  });
+
+  reachFadeTimer = setTimeout(() => {
+    document.querySelectorAll("#reachLayer .reach-banner").forEach(el => {
+      el.classList.add("fade-out");
+    });
+  }, REACH_LABEL_DURATION);
+}
+
+/* =================================================================
+   【BONUS リーチ表示更新】
+================================================================= */
+function updateBonusReachDisplay() {
+  const layer = document.getElementById("bonusReachLayer");
+  const panelWrap = document.getElementById("bonusPanelWrap").getBoundingClientRect();
+  layer.innerHTML = "";
+  clearTimeout(bonusReachFadeTimer);
+
+  if (gamePhase === "FINISHED") return;
+
+  let reachSpots = getBonusReachSpots();
+  if (reachSpots.length === 0) return;
+
+  const reachSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  reachSvg.setAttribute("width", "100%");
+  reachSvg.setAttribute("height", "100%");
+  reachSvg.style.position = "absolute";
+  reachSvg.style.top = "0";
+  reachSvg.style.left = "0";
+  reachSvg.style.pointerEvents = "none";
+  reachSvg.style.zIndex = "1";
+  layer.appendChild(reachSvg);
+
+  getBonusLines().forEach(line => {
+    const hitCount = line.filter(pos => bonusGrid[pos.r][pos.c]).length;
+    if (hitCount !== 4) return;
+
+    const firstCell = document.getElementById(`bcell-${line[0].r}-${line[0].c}`);
+    const lastCell = document.getElementById(`bcell-${line[line.length - 1].r}-${line[line.length - 1].c}`);
+    if (!firstCell || !lastCell) return;
+
+    const firstRect = firstCell.getBoundingClientRect();
+    const lastRect = lastCell.getBoundingClientRect();
+    const svgLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    svgLine.setAttribute("x1", firstRect.left + firstRect.width / 2 - panelWrap.left);
+    svgLine.setAttribute("y1", firstRect.top + firstRect.height / 2 - panelWrap.top);
+    svgLine.setAttribute("x2", lastRect.left + lastRect.width / 2 - panelWrap.left);
+    svgLine.setAttribute("y2", lastRect.top + lastRect.height / 2 - panelWrap.top);
+    svgLine.setAttribute("stroke", "#e08a2e");
+    svgLine.setAttribute("stroke-width", "2");
+    svgLine.setAttribute("stroke-linecap", "round");
+    svgLine.setAttribute("filter", "drop-shadow(0 0 2px #d46b08)");
+    svgLine.setAttribute("opacity", "0.8");
+    reachSvg.appendChild(svgLine);
+  });
+
+  reachSpots.forEach(pos => {
+    let cell = document.getElementById(`bcell-${pos.r}-${pos.c}`);
+    if (cell) {
+      let cr = cell.getBoundingClientRect();
+      let left = cr.left - panelWrap.left;
+      let top = cr.top - panelWrap.top;
+
+      let markerContainer = document.createElement("div");
+      markerContainer.className = "reach-marker-container bonus-reach-marker active";
+      markerContainer.style.left = `${left}px`;
+      markerContainer.style.top = `${top}px`;
+
+      let circle = document.createElement("div");
+      circle.className = "reach-circle";
+
+      let banner = document.createElement("div");
+      banner.className = "reach-banner";
+      banner.innerText = "REACH";
+
+      markerContainer.appendChild(circle);
+      markerContainer.appendChild(banner);
+      layer.appendChild(markerContainer);
+    }
+  });
+
+  bonusReachFadeTimer = setTimeout(() => {
+    document.querySelectorAll("#bonusReachLayer .reach-banner").forEach(el => {
+      el.classList.add("fade-out");
+    });
+  }, REACH_LABEL_DURATION);
+}
+
+function drawHudOverlay() {
+  const svg = document.getElementById("hudSvgOverlay");
+  const superLineSvg = document.getElementById("superLineSvgOverlay");
+  const lineSvg = document.getElementById("lineSvgOverlay");
+  const outer = document.getElementById("galaxyOuterFrame").getBoundingClientRect();
+  svg.innerHTML = "";
+  superLineSvg.innerHTML = "";
+  lineSvg.innerHTML = "";
+
+  const lines = getAllLines();
+
+  lines.forEach(line => {
+    let p1 = document.getElementById(`cell-${line[0].r}-${line[0].c}`);
+    let p2 = document.getElementById(`cell-${line[line.length - 1].r}-${line[line.length - 1].c}`);
+    if (!p1 || !p2) return;
+
+    let r1 = p1.getBoundingClientRect();
+    let r2 = p2.getBoundingClientRect();
+    let x1 = r1.left + r1.width / 2 - outer.left;
+    let y1 = r1.top + r1.height / 2 - outer.top;
+    let x2 = r2.left + r2.width / 2 - outer.left;
+    let y2 = r2.top + r2.height / 2 - outer.top;
+
+    let svgLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    svgLine.setAttribute("x1", x1); svgLine.setAttribute("y1", y1);
+    svgLine.setAttribute("x2", x2); svgLine.setAttribute("y2", y2);
+    svgLine.setAttribute("stroke", "#39ff14");
+    svgLine.setAttribute("stroke-width", "2");
+    svgLine.setAttribute("stroke-linecap", "round");
+    svgLine.setAttribute("filter", "drop-shadow(0 0 2px #39ff14)");
+    svgLine.setAttribute("opacity", "0.35");
+    lineSvg.appendChild(svgLine);
+  });
+
+  lines.forEach((line, idx) => {
+    let isHyper = hyperLineIndices.includes(idx);
+    let isSuper = superLineIndices.includes(idx);
+
+    if (isHyper || isSuper) {
+      let p1 = document.getElementById(`cell-${line[0].r}-${line[0].c}`);
+      let p2 = document.getElementById(`cell-${line[line.length - 1].r}-${line[line.length - 1].c}`);
+      if (p1 && p2) {
+        let r1 = p1.getBoundingClientRect();
+        let r2 = p2.getBoundingClientRect();
+        let x1 = r1.left + r1.width / 2 - outer.left;
+        let y1 = r1.top + r1.height / 2 - outer.top;
+        let x2 = r2.left + r2.width / 2 - outer.left;
+        let y2 = r2.top + r2.height / 2 - outer.top;
+
+        let svgLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        svgLine.setAttribute("x1", x1); svgLine.setAttribute("y1", y1);
+        svgLine.setAttribute("x2", x2); svgLine.setAttribute("y2", y2);
+        svgLine.setAttribute("stroke", isHyper ? "#ff2200" : "#ff9900");
+        svgLine.setAttribute("stroke-width", "3.5");
+        svgLine.setAttribute("stroke-linecap", "round");
+        svgLine.setAttribute("filter", isHyper ? "drop-shadow(0 0 5px #ff2200)" : "drop-shadow(0 0 5px #ff9900)");
+        svgLine.setAttribute("opacity", "0.45");
+        superLineSvg.appendChild(svgLine);
+      }
+    }
+  });
+
+  const zones = [
+    { key: 'UL', tagEl: document.querySelector('.tag-a') },
+    { key: 'UR', tagEl: document.querySelector('.tag-b') },
+    { key: 'DL', tagEl: document.querySelector('.tag-c') },
+    { key: 'DR', tagEl: document.querySelector('.tag-d') }
+  ];
+
+  zones.forEach(z => {
+    let coords = getZoneCoords(z.key);
+    let tagRect = z.tagEl.getBoundingClientRect();
+    let tx = tagRect.left + tagRect.width / 2 - outer.left;
+    let ty = tagRect.top + tagRect.height / 2 - outer.top;
+
+    let targetX, targetY;
+
+    if (features.MOVE === 2) {
+      let xs = [], ys = [];
+      coords.forEach(([r, c]) => {
+        let cell = document.getElementById(`cell-${r}-${c}`);
+        if (cell) {
+          let cr = cell.getBoundingClientRect();
+          let x = cr.left - outer.left - 2;
+          let y = cr.top - outer.top - 2;
+          let w = cr.width + 4;
+          let h = cr.height + 4;
+
+          xs.push(cr.left - outer.left, cr.right - outer.left);
+          ys.push(cr.top - outer.top, cr.bottom - outer.top);
+
+          let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          rect.setAttribute("x", x);
+          rect.setAttribute("y", y);
+          rect.setAttribute("width", w);
+          rect.setAttribute("height", h);
+          rect.setAttribute("rx", "6");
+          rect.setAttribute("fill", "none");
+          rect.setAttribute("stroke", "#39ff14");
+          rect.setAttribute("stroke-width", "2.5");
+          rect.setAttribute("filter", "drop-shadow(0 0 6px #00ff66)");
+          svg.appendChild(rect);
+        }
+      });
+
+      if (xs.length > 0) {
+        let minX = Math.min(...xs);
+        let maxX = Math.max(...xs);
+        let minY = Math.min(...ys);
+        let maxY = Math.max(...ys);
+
+        targetX = (z.key.includes('L')) ? minX : maxX;
+        targetY = minY + (maxY - minY) / 2;
+      }
+    } else if (features.MOVE === 1) {
+      let polyPoints = [];
+      let cRects = {};
+      coords.forEach(([r, c]) => {
+        let cell = document.getElementById(`cell-${r}-${c}`);
+        if (cell) cRects[`${r},${c}`] = cell.getBoundingClientRect();
+      });
+
+      let pad = 3;
+      if (z.key === 'UL') {
+        let r00 = cRects['0,0'], r20 = cRects['2,0'], r11 = cRects['1,1'], r01 = cRects['0,1'];
+        if (r00 && r20 && r11 && r01) {
+          let x0 = r00.left - outer.left - pad, y0 = r00.top - outer.top - pad;
+          let x1 = r01.right - outer.left + pad, y1 = r11.bottom - outer.top + pad;
+          let xMid = r00.right - outer.left + pad;
+          let y2 = r20.bottom - outer.top + pad;
+          polyPoints = `${x0},${y0} ${x1},${y0} ${x1},${y1} ${xMid},${y1} ${xMid},${y2} ${x0},${y2}`;
+          targetX = x0; targetY = (y0 + y2) / 2;
+        }
+      } else if (z.key === 'UR') {
+        let r02 = cRects['0,2'], r04 = cRects['0,4'], r14 = cRects['1,4'], r13 = cRects['1,3'];
+        if (r02 && r04 && r14 && r13) {
+          let x0 = r02.left - outer.left - pad, y0 = r02.top - outer.top - pad;
+          let x1 = r04.right - outer.left + pad, y1 = r14.bottom - outer.top + pad;
+          let xMid = r13.left - outer.left - pad;
+          let yMid = r02.bottom - outer.top + pad;
+          polyPoints = `${x0},${y0} ${x1},${y0} ${x1},${y1} ${xMid},${y1} ${xMid},${yMid} ${x0},${yMid}`;
+          targetX = x1; targetY = (y0 + y1) / 2;
+        }
+      } else if (z.key === 'DL') {
+        let r30 = cRects['3,0'], r31 = cRects['3,1'], r42 = cRects['4,2'], r40 = cRects['4,0'];
+        if (r30 && r31 && r42 && r40) {
+          let x0 = r30.left - outer.left - pad, y0 = r30.top - outer.top - pad;
+          let xMid = r31.right - outer.left + pad, y1_bot = r42.bottom - outer.top + pad;
+          let x1 = r42.right - outer.left + pad;
+          let yMid = r30.bottom - outer.top + pad;
+          polyPoints = `${x0},${y0} ${xMid},${y0} ${xMid},${yMid} ${x1},${yMid} ${x1},${y1_bot} ${x0},${y1_bot}`;
+          targetX = x0; targetY = (y0 + y1_bot) / 2;
+        }
+      } else if (z.key === 'DR') {
+        let r24 = cRects['2,4'], r44 = cRects['4,4'], r43 = cRects['4,3'], r33 = cRects['3,3'];
+        if (r24 && r44 && r43 && r33) {
+          let x0 = r24.left - outer.left - pad, y0 = r24.top - outer.top - pad;
+          let x1 = r44.right - outer.left + pad, y1 = r44.bottom - outer.top + pad;
+          let xMid = r33.left - outer.left - pad, yMid = r24.bottom - outer.top + pad;
+          polyPoints = `${x0},${y0} ${x1},${y0} ${x1},${y1} ${xMid},${y1} ${xMid},${yMid} ${x0},${yMid}`;
+          targetX = x1; targetY = (y0 + y1) / 2;
+        }
+      }
+
+      if (polyPoints.length > 0) {
+        let polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        polygon.setAttribute("points", polyPoints);
+        polygon.setAttribute("fill", "none");
+        polygon.setAttribute("stroke", "#39ff14");
+        polygon.setAttribute("stroke-width", "2.5");
+        polygon.setAttribute("filter", "drop-shadow(0 0 6px #00ff66)");
+        svg.appendChild(polygon);
+      }
+    } else {
+      let xs = [], ys = [];
+      coords.forEach(([r, c]) => {
+        let cell = document.getElementById(`cell-${r}-${c}`);
+        if (cell) {
+          let cr = cell.getBoundingClientRect();
+          xs.push(cr.left - outer.left, cr.right - outer.left);
+          ys.push(cr.top - outer.top, cr.bottom - outer.top);
+        }
+      });
+      if (xs.length === 0) return;
+
+      let minX = Math.min(...xs) - 2;
+      let maxX = Math.max(...xs) + 2;
+      let minY = Math.min(...ys) - 2;
+      let maxY = Math.max(...ys) + 2;
+      let width = maxX - minX;
+      let height = maxY - minY;
+
+      targetX = (z.key.includes('L')) ? minX : maxX;
+      targetY = minY + height / 2;
+
+      let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      rect.setAttribute("x", minX);
+      rect.setAttribute("y", minY);
+      rect.setAttribute("width", width);
+      rect.setAttribute("height", height);
+      rect.setAttribute("rx", "8");
+      rect.setAttribute("fill", "none");
+      rect.setAttribute("stroke", "#39ff14");
+      rect.setAttribute("stroke-width", "2.5");
+      rect.setAttribute("filter", "drop-shadow(0 0 6px #00ff66)");
+      svg.appendChild(rect);
+    }
+
+    if (targetX !== undefined) {
+      let line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+      let midX = (tx + targetX) / 2;
+      line.setAttribute("points", `${tx},${ty} ${midX},${ty} ${targetX},${targetY}`);
+      line.setAttribute("stroke", "#39ff14");
+      line.setAttribute("stroke-width", "2");
+      line.setAttribute("fill", "none");
+      line.setAttribute("filter", "drop-shadow(0 0 4px #00ff66)");
+      svg.appendChild(line);
+    }
+  });
+}
+
+function renderHitNumberOverlay() {
+  const overlay = document.getElementById("hitNumberOverlay");
+  const outer = document.getElementById("galaxyOuterFrame").getBoundingClientRect();
+  overlay.innerHTML = "";
+
+  for (let r = 0; r < 5; r++) {
+    for (let c = 0; c < 5; c++) {
+      if (!grid[r][c].hit) continue;
+
+      const cell = document.getElementById(`cell-${r}-${c}`);
+      if (!cell) continue;
+
+      const rect = cell.getBoundingClientRect();
+      const number = document.createElement("div");
+      number.id = `hit-number-${r}-${c}`;
+      number.className = "hit-number-overlay";
+      number.style.left = `${rect.left - outer.left}px`;
+      number.style.top = `${rect.top - outer.top}px`;
+      number.innerText = grid[r][c].num;
+      overlay.appendChild(number);
+    }
+  }
+}
+
+function rotateZone(zoneKey) {
+  if (gamePhase === "FINISHED" || !canRotate || isAnimating) return;
+  isAnimating = true;
+
+  let coords = getZoneCoords(zoneKey);
+  let len = coords.length;
+
+  coords.forEach(([r, c], idx) => {
+    let nextIdx = (idx + 1) % len;
+    let [nextR, nextC] = coords[nextIdx];
+
+    let dy = (nextR - r) * STEP_SIZE;
+    let dx = (nextC - c) * STEP_SIZE;
+
+    let el = document.getElementById(`cell-${r}-${c}`);
+    let hitNumber = document.getElementById(`hit-number-${r}-${c}`);
+    if (el) {
+      el.classList.add("sliding");
+      el.style.transform = `translate(${dx}px, ${dy}px)`;
+    }
+    if (hitNumber) {
+      hitNumber.style.transform = `translate(${dx}px, ${dy}px)`;
+    }
+  });
+
+  setTimeout(() => {
+    let vals = coords.map(([r, c]) => grid[r][c]);
+    vals.unshift(vals.pop());
+    coords.forEach(([r, c], idx) => {
+      grid[r][c] = vals[idx];
+    });
+
+    renderGrid();
+    isAnimating = false;
+    updateReachDisplay();
+  }, 180);
+}
+
+function addBet(amt) {
+  if (gamePhase !== "BETTING" || credit < amt) return;
+  if (bet === 0 && amt < 10) return;
+
+  if (bet === 0) {
+    document.getElementById("disp-win").innerText = 0;
+  }
+
+  credit -= amt;
+  bet += amt;
+
+  if (amt === 10) {
+    document.getElementById("btn-ride").style.display = "none";
+  }
+
+  document.getElementById("betFrontNotice").style.display = "none";
+
+  const oddsChance = (amt >= 10) ? 0.50 : 0.12;
+  if (Math.random() < oddsChance && oddsValue < 300) {
+    oddsValue = Math.min(300, oddsValue + 10);
+    renderOddsTable();
+  }
+
+  if (gameMode !== "RIDE") {
+    const featChance = (amt >= 10) ? 0.40 : 0.10;
+    const cats = ["MOVE", "SPECIAL", "GREEN", "YELLOW", "RED"];
+    const targetCat = cats[Math.floor(Math.random() * cats.length)];
+    if (Math.random() < featChance) {
+      if (targetCat === "MOVE") {
+        if (features.MOVE === 0) features.MOVE = 1;
+        else if (features.MOVE === 1) features.MOVE = 2;
+        else if (features.MOVE === 2) features.MOVE = 1;
+        renderGrid();
+      } else {
+        const maxLvs = { SPECIAL: 4, GREEN: 4, YELLOW: 4, RED: 4 };
+        if (features[targetCat] === 0) {
+          featureBranches[targetCat] = Math.random() < 0.5
+            ? { SPECIAL: "CORNER", GREEN: "BONUS", YELLOW: "ODDS", RED: "LENGTH" }[targetCat]
+            : { SPECIAL: "SLASH", GREEN: "LINE", YELLOW: "NUMBERS", RED: "SIDE" }[targetCat];
+          features[targetCat] = featureBranches[targetCat] === "CORNER" ||
+            featureBranches[targetCat] === "BONUS" ||
+            featureBranches[targetCat] === "ODDS" ||
+            featureBranches[targetCat] === "LENGTH" ? 1 : 3;
+        } else if (features[targetCat] < 2 || (features[targetCat] >= 3 && features[targetCat] < 4)) {
+          features[targetCat]++;
+        }
+        renderGrid();
+      }
+    }
+  }
+
+  updateUI();
+}
+
+async function rollSingleBall(ballIndex, availablePool) {
+  let bEl = document.getElementById(`b-${ballIndex}`);
+
+  let ballColor = 'green';
+  if (ballIndex === 3) {
+    ballColor = (Math.random() < 0.7) ? 'yellow' : 'green';
+  } else if (ballIndex === 4) {
+    ballColor = (Math.random() < 0.7) ? 'red' : 'green';
+  }
+
+  if (ballIndex >= 3) {
+    bEl.className = `h-ball rolling ball-${ballColor}`;
+    document.getElementById("ballPhaseText").innerText = `${ballIndex + 1}球目: [${ballColor.toUpperCase()} BALL] 抽選中...`;
+  } else {
+    bEl.className = "h-ball rolling ball-green";
+    document.getElementById("ballPhaseText").innerText = `${ballIndex + 1}球目 抽選中...`;
+  }
+
+  let rollSteps = (ballIndex < 3) ? 28 : 46;
+  for (let t = 0; t < rollSteps; t++) {
+    let tempNum = availablePool[Math.floor(Math.random() * availablePool.length)];
+    bEl.innerText = tempNum;
+    let delay = 60 + Math.floor(Math.pow(t / rollSteps, 2.6) * 360);
+    await new Promise(res => setTimeout(res, delay));
+  }
+
+  let finalIdx = Math.floor(Math.random() * availablePool.length);
+  let finalBall = availablePool.splice(finalIdx, 1)[0];
+  bEl.innerText = finalBall;
+  bEl.className = `h-ball active ball-${ballColor}`;
+
+  return { num: finalBall, color: ballColor };
+}
+
+async function startGame() {
+  clearInterval(betTimer);
+  document.getElementById("betFrontNotice").style.display = "none";
+  clearFeatureResult();
+  clearSpecialPayout();
+
+  gamePhase = "DRAWING_1_3";
+  let hasBet = (bet >= 10 || gameMode === "BONUS" || gameMode === "RIDE");
+
+  setRotationButtonsState(hasBet);
+  setHudZoneVisibility(hasBet);
+
+  document.getElementById("btn-start").disabled = true;
+  document.getElementById("btn-bet1").disabled = true;
+  document.getElementById("btn-bet10").disabled = true;
+  document.getElementById("btn-ride").style.display = "none";
+
+  for (let i = 0; i < 5; i++) {
+    let bEl = document.getElementById(`b-${i}`);
+    bEl.className = "h-ball";
+    bEl.innerText = "-";
+  }
+
+  drawnBallsData = [];
+  let available = Array.from({length: 25}, (_, i) => i + 1);
+
+  // 1〜3球目抽選
+  for (let i = 0; i < 3; i++) {
+    let ballData = await rollSingleBall(i, available);
+    drawnBallsData.push(ballData);
+
+    activateSpot(ballData.num);
+
+    renderGrid();
+    if (hasBet) {
+      updateReachDisplay();
+      updateBonusReachDisplay();
+    }
+    if (hasBet && gameMode !== "RIDE" && i < 2) {
+      if (features.GREEN > 0 && !isGreenSpot(ballData.num)) {
+        showFeatureResult(false, "GREEN");
+      }
+    }
+    await new Promise(r => setTimeout(r, 400));
+  }
+
+  // GREENフィーチャー発動判定（3球目終了時）
+  if (hasBet && gameMode !== "RIDE") {
+    let allGreen = drawnBallsData.slice(0, 3).every(b => isGreenSpot(b.num));
+    if (features.GREEN > 0) {
+      const greenResult = document.getElementById("featureResultNotice-GREEN");
+      if (!greenResult || greenResult.dataset.result !== "failed") {
+        showFeatureResult(allGreen, "GREEN");
+      }
+    }
+    if (allGreen && features.GREEN > 0) {
+      document.getElementById("ballPhaseText").innerText = "GREEN FEATURE 発動";
+      applyGreenFeature();
+      renderGrid();
+      updateUI();
+      await new Promise(r => setTimeout(r, 800));
+    } else if (allGreen) {
+      document.getElementById("ballPhaseText").innerText = "GREEN SPOT 成立";
+      await new Promise(r => setTimeout(r, 600));
+    } else {
+      document.getElementById("ballPhaseText").innerText = "GREEN SPOT 不成立";
+      await new Promise(r => setTimeout(r, 600));
+    }
+  }
+
+  if (hasBet && checkBingoAtStage()) {
+    await new Promise(r => setTimeout(r, 2500));
+  }
+  updateSpecialCornerResult();
+
+  // 3球目終了時 ROTATIONタイム (25秒ウェイト)
+  gamePhase = "ROTATION_TIME";
+  let rotTimeLeft = 25;
+
+  if (hasBet) {
+    document.getElementById("ballPhaseText").innerText = "ROTATION TIME";
+  } else {
+    document.getElementById("ballPhaseText").innerText = "4・5球目 抽選準備中...";
+  }
+
+  await new Promise(resolve => {
+    rotationTimer = setInterval(() => {
+      rotTimeLeft--;
+
+      if (hasBet) {
+        if (rotTimeLeft <= 10) {
+          document.getElementById("ballPhaseText").innerText = `ROTATION TIME: 残り ${rotTimeLeft} 秒`;
+        } else {
+          document.getElementById("ballPhaseText").innerText = "ROTATION TIME: 配置を調整せよ！";
+        }
+      }
+
+      if (rotTimeLeft <= 0) {
+        clearInterval(rotationTimer);
+        resolve();
+      }
+    }, 1000);
+  });
+
+  setHudZoneVisibility(false);
+  setRotationButtonsState(false);
+  document.getElementById("ballPhaseText").innerText = hasBet ? "ROTATION LOCKED! 運命の4・5球目へ" : "4・5球目 抽選へ";
+  await new Promise(r => setTimeout(r, 1000));
+
+  // 4・5球目抽選
+  gamePhase = "DRAWING_4_5";
+  for (let i = 3; i < 5; i++) {
+    let ballData = await rollSingleBall(i, available);
+    drawnBallsData.push(ballData);
+
+    activateSpot(ballData.num);
+    renderGrid();
+    if (hasBet) {
+      if (i === 3) updateReachDisplay();
+      updateBonusReachDisplay();
+    }
+
+    if (hasBet && gameMode !== "RIDE") {
+      if (i === 3 && features.YELLOW > 0) {
+        const yellowActivated = ballData.color === 'yellow' && isYellowRedSpot(ballData.num);
+        showFeatureResult(yellowActivated, "YELLOW");
+        if (yellowActivated) {
+          document.getElementById("ballPhaseText").innerText = "YELLOW FEATURE 発動";
+          await new Promise(r => setTimeout(r, 600));
+          applyYellowFeature(ballData.num);
+          renderGrid();
+        } else {
+          document.getElementById("ballPhaseText").innerText = "YELLOW SPOT 不成立";
+        }
+      }
+
+      if (i === 3) {
+        document.getElementById("ballPhaseText").innerText = "5球目へ…";
+        await new Promise(r => setTimeout(r, 2500));
+      }
+
+      if (i === 4 && features.RED > 0) {
+        const redActivated = ballData.color === 'red' && isYellowRedSpot(ballData.num);
+        showFeatureResult(redActivated, "RED");
+        if (redActivated) {
+          document.getElementById("ballPhaseText").innerText = "RED FEATURE 発動";
+          await new Promise(r => setTimeout(r, 600));
+          applyRedFeature(ballData.num);
+          renderGrid();
+        } else {
+          document.getElementById("ballPhaseText").innerText = "RED SPOT 不成立";
+        }
+      }
+    }
+
+    if (hasBet) checkBingoAtStage();
+    updateSpecialCornerResult();
+    await new Promise(r => setTimeout(r, 600));
+  }
+
+  const finalResult = calculateCurrentWin();
+  document.getElementById("ballPhaseText").innerText = finalResult.totalWin > 0
+    ? `WIN ${finalResult.totalWin}`
+    : "LOSE";
+  await new Promise(r => setTimeout(r, 3000));
+
+  evaluateGame();
+}
+
+function activateSpot(num) {
+  for (let r = 0; r < 5; r++) {
+    for (let c = 0; c < 5; c++) {
+      if (grid[r][c].num === num) grid[r][c].hit = true;
+    }
+  }
+}
+
+function applyGreenFeature() {
+  if (featureBranches.GREEN === "LINE" && features.GREEN === 4) {
+    hyperLineIndices = getRandomLineIndices(4);
+    superLineIndices = [];
+  } else if (featureBranches.GREEN === "LINE" && features.GREEN === 3) {
+    superLineIndices = getRandomLineIndices(4);
+    hyperLineIndices = [];
+  } else if (featureBranches.GREEN === "BONUS" && features.GREEN === 2) {
+    grid[2][2].hit = true;
+  } else if (featureBranches.GREEN === "BONUS" && features.GREEN === 1) {
+    const surrounding = [[1,2], [3,2], [2,1], [2,3]];
+    const chosen = surrounding[Math.floor(Math.random() * surrounding.length)];
+    grid[chosen[0]][chosen[1]].hit = true;
+  }
+}
+
+function applyYellowFeature(ballNum) {
+  if (featureBranches.YELLOW === "ODDS" && features.YELLOW === 1) {
+    oddsValue = Math.min(300, oddsValue * 2);
+    renderOddsTable();
+  } else if (featureBranches.YELLOW === "ODDS" && features.YELLOW === 2) {
+    oddsValue = Math.min(300, oddsValue * 3);
+    renderOddsTable();
+  }
+  if (featureBranches.YELLOW === "NUMBERS" && features.YELLOW === 3) activateSpot(ballNum + 1);
+  if (featureBranches.YELLOW === "NUMBERS" && features.YELLOW === 4) { activateSpot(ballNum - 1); activateSpot(ballNum + 1); }
+}
+
+function applyRedFeature(ballNum) {
+  let target = null;
+  for (let r = 0; r < 5; r++) {
+    for (let c = 0; c < 5; c++) {
+      if (grid[r][c].num === ballNum) target = {r, c};
+    }
+  }
+  if (!target) return;
+
+  let offsets = [];
+  if (featureBranches.RED === "LENGTH" && features.RED === 1) offsets = [[-1, 0], [1, 0]];
+  if (featureBranches.RED === "LENGTH" && features.RED === 2) offsets = [[-1,-1], [-1,1], [1,-1], [1,1]];
+  if (featureBranches.RED === "SIDE" && features.RED === 3) offsets = [[0,-1], [0,1]];
+  if (featureBranches.RED === "SIDE" && features.RED === 4) offsets = [[-1,0], [1,0], [0,-1], [0,1]];
+
+  offsets.forEach(([dr, dc]) => {
+    let nr = target.r + dr, nc = target.c + dc;
+    if (nr >= 0 && nr < 5 && nc >= 0 && nc < 5) grid[nr][nc].hit = true;
+  });
+}
+
+function getBingoWinningNums() {
+  const winningNums = new Set();
+  getAllLines().forEach(line => {
+    if (getMaxConsecutiveHits(line, grid) >= 3) {
+      line.forEach(({r, c}) => {
+        if (grid[r][c].hit) winningNums.add(grid[r][c].num);
+      });
+    }
+  });
+  return winningNums;
+}
+
+function checkBingoAtStage() {
+  const winningNums = getBingoWinningNums();
+  const isBingo = winningNums.size > 0;
+  if (isBingo) {
+    document.getElementById("ballPhaseText").innerText = "BINGO!";
+    updateBonusCard(winningNums);
+  }
+  return isBingo;
+}
+
+function getSpecialCornerResult() {
+  if (featureBranches.SPECIAL !== "CORNER" || features.SPECIAL === 0) return null;
+
+  const corners = [[0,0], [0,4], [4,0], [4,4]];
+  if (corners.every(([r, c]) => grid[r][c].hit)) return true;
+
+  const missingCount = corners.filter(([r, c]) => !grid[r][c].hit).length;
+  const remainingDraws = Math.max(0, 5 - drawnBallsData.length);
+  let extraActivations = 0;
+
+  if (featureBranches.YELLOW === "NUMBERS" && features.YELLOW >= 3 && drawnBallsData.length < 4) {
+    extraActivations += features.YELLOW === 4 ? 2 : 1;
+  }
+  if (featureBranches.RED && drawnBallsData.length < 5) {
+    extraActivations += 4;
+  }
+
+  return missingCount <= remainingDraws + extraActivations ? null : false;
+}
+
+function updateSpecialCornerResult() {
+  const result = getSpecialCornerResult();
+  if (result !== null) showFeatureResult(result, "SPECIAL");
+}
+
+function calculateCurrentWin() {
+  let totalWin = 0;
+  let winningNums = new Set();
+  const lines = getAllLines();
+
+  lines.forEach((line, idx) => {
+    const maxConsecutive = getMaxConsecutiveHits(line, grid);
+    if (maxConsecutive < 3) return;
+
+    const multiplier = maxConsecutive === 3 ? 1 : (maxConsecutive === 4 ? 3 : 8);
+    const lineBasePayout = oddsValue * multiplier;
+    const lineMult = hyperLineIndices.includes(idx) ? 3 : (superLineIndices.includes(idx) ? 2 : 1);
+    totalWin += lineBasePayout * lineMult;
+    line.forEach(({r, c}) => {
+      if (grid[r][c].hit) winningNums.add(grid[r][c].num);
+    });
+  });
+
+  if (gameMode !== "RIDE" && featureBranches.SPECIAL === "CORNER" && features.SPECIAL >= 1) {
+    const corners = [[0,0], [0,4], [4,0], [4,4]];
+    if (corners.every(([r, c]) => grid[r][c].hit)) {
+      totalWin += oddsValue * (features.SPECIAL === 2 ? 6 : 3);
+    }
+  }
+
+  return {totalWin, winningNums};
+}
+
+function evaluateGame() {
+  gamePhase = "FINISHED";
+  clearFeatureResult();
+  clearTimeout(reachFadeTimer);
+  clearTimeout(bonusReachFadeTimer);
+  document.getElementById("reachLayer").innerHTML = "";
+  document.getElementById("bonusReachLayer").innerHTML = "";
+
+  let hasBet = (bet >= 10 || gameMode === "NORMAL" && bet >= 10 || gameMode === "BONUS" || gameMode === "RIDE");
+  let totalWin = 0;
+  let winningNums = new Set();
+
+  if (hasBet) {
+    ({totalWin, winningNums} = calculateCurrentWin());
+
+    credit += totalWin;
+    lastWin = totalWin;
+    document.getElementById("disp-win").innerText = totalWin;
+    document.getElementById("disp-credit").innerText = credit;
+    document.getElementById("ballPhaseText").innerText = totalWin > 0 ? `WIN ${totalWin}` : "LOSE";
+
+    updateBonusCard(winningNums);
+  } else {
+    document.getElementById("ballPhaseText").innerText = "NO BET GAME OVER";
+  }
+
+  pastHistoryData.unshift([...drawnBallsData]);
+  if (pastHistoryData.length > 3) pastHistoryData.pop();
+  renderHistory();
+
+  for (let i = 0; i < 5; i++) {
+    let bEl = document.getElementById(`b-${i}`);
+    bEl.className = "h-ball";
+    bEl.innerText = "-";
+  }
+
+  if (hasBet && gameMode !== "RIDE" && checkBonusGame()) {
+    triggerBonusGame();
+  } else {
+    if (totalWin > 0) {
+      document.getElementById("btn-ride").style.display = "block";
+    }
+    resetRound();
+    //document.getElementById("ballPhaseText").innerText = totalWin > 0 ? `WIN ${totalWin}` : "LOSE";
+  }
+}
+
+function updateBonusCard(winningNums) {
+  let lateBalls = drawnBallsData.slice(2).map(b => b.num);
+  winningNums.forEach(num => {
+    if (lateBalls.includes(num)) {
+      for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+          if (bonusNumbers[r][c] === num) bonusGrid[r][c] = true;
+        }
+      }
+    }
+  });
+  renderBonusGrid();
+}
+
+function checkBonusGame() {
+  for (const line of getBonusLines()) {
+    if (line.every(({r, c}) => bonusGrid[r][c])) return true;
+  }
+  return false;
+}
+
+function triggerBonusGame() {
+  alert("★ BONUS GAME START! 全フィーチャー全開放 ★");
+  gameMode = "BONUS";
+  bonusGrid = Array(5).fill(null).map(() => Array(5).fill(false));
+  features = { MOVE: 2, SPECIAL: 4, GREEN: 4, YELLOW: 4, RED: 4 };
+  featureBranches = { SPECIAL: "CORNER", GREEN: "BONUS", YELLOW: "ODDS", RED: "LENGTH" };
+  bet = 50;
+  oddsValue = 300;
+  resetLinesToDefault();
+  renderOddsTable();
+  resetRound(true);
+}
+
+async function startRideGame() {
+  document.getElementById("disp-win").innerText = 0;
+  gameMode = "RIDE";
+  bet = lastWin;
+  credit = Math.max(0, credit - lastWin);
+  document.getElementById("disp-credit").innerText = credit;
+  document.getElementById("disp-bet").innerText = bet;
+
+  document.getElementById("btn-ride").style.display = "none";
+  features = { MOVE: 0, SPECIAL: 0, GREEN: 0, YELLOW: 0, RED: 0 };
+  featureBranches = { SPECIAL: null, GREEN: null, YELLOW: null, RED: null };
+  resetLinesToDefault();
+
+  let rNotice = document.getElementById("rideRouletteNotice");
+  let rVal = document.getElementById("rideRouletteValue");
+  rNotice.style.display = "flex";
+
+  const multPool = [2.0, 2.0, 2.0, 1.5, 1.5, 3.0, 3.0, 4.0, 5.0];
+  const multDisplayList = [1.5, 2.0, 3.0, 4.0, 5.0];
+
+  for (let t = 0; t < 22; t++) {
+    let temp = multDisplayList[Math.floor(Math.random() * multDisplayList.length)];
+    rVal.innerText = `x${temp.toFixed(1)}`;
+    await new Promise(res => setTimeout(res, 60 + t * 12));
+  }
+
+  rideMultiplier = multPool[Math.floor(Math.random() * multPool.length)];
+  rVal.innerText = `x${rideMultiplier.toFixed(1)}`;
+  await new Promise(res => setTimeout(res, 1200));
+  rNotice.style.display = "none";
+
+  oddsValue = Math.floor(bet * rideMultiplier);
+  renderOddsTable();
+
+  resetRound(true);
+  startGame();
+}
+
+function resetRound(keepMode = false) {
+  if (!keepMode) {
+    gameMode = "NORMAL";
+    bet = 0;
+    oddsValue = 10;
+    resetLinesToDefault();
+    renderOddsTable();
+    features = { MOVE: 0, SPECIAL: 0, GREEN: 0, YELLOW: 0, RED: 0 };
+    featureBranches = { SPECIAL: null, GREEN: null, YELLOW: null, RED: null };
+  }
+  gamePhase = "BETTING";
+  setRotationButtonsState(true);
+  setHudZoneVisibility(true);
+  initGrid();
+  renderGrid();
+  renderBonusGrid();
+  updateUI();
+  if (gameMode !== "RIDE") {
+    startBetCountdown();
+  }
+  document.getElementById("btn-start").disabled = false;
+  document.getElementById("btn-bet10").disabled = false;
+}
+
+function renderGrid() {
+  const container = document.getElementById("bingoGrid");
+  container.innerHTML = "";
+
+  for (let r = 0; r < 5; r++) {
+    for (let c = 0; c < 5; c++) {
+      let d = document.createElement("div");
+      d.id = `cell-${r}-${c}`;
+      d.className = "cell" + (grid[r][c].hit ? " hit" : "");
+      d.innerText = grid[r][c].num;
+      container.appendChild(d);
+    }
+  }
+
+  requestAnimationFrame(() => {
+    drawHudOverlay();
+    renderHitNumberOverlay();
+    if (bet > 0 || gameMode === "BONUS" || gameMode === "RIDE") {
+      updateReachDisplay();
+      updateBonusReachDisplay();
+    }
+  });
+}
+
+function renderBonusGrid() {
+  const container = document.getElementById("bonusGrid");
+  container.innerHTML = "";
+  for (let r = 0; r < 5; r++) {
+    for (let c = 0; c < 5; c++) {
+      let d = document.createElement("div");
+      d.id = `bcell-${r}-${c}`;
+      d.className = "b-cell" + (bonusGrid[r][c] ? " hit" : "");
+      d.innerText = bonusNumbers[r][c];
+      container.appendChild(d);
+    }
+  }
+
+  requestAnimationFrame(() => {
+    updateBonusReachDisplay();
+  });
+}
+
+function renderHistory() {
+  const container = document.getElementById("historyListContainer");
+  container.innerHTML = "";
+
+  pastHistoryData.forEach((roundBalls, idx) => {
+    let row = document.createElement("div");
+    row.className = "history-row";
+
+    let numLabel = document.createElement("div");
+    numLabel.className = "history-row-num";
+    numLabel.innerText = `${idx + 1}:`;
+    row.appendChild(numLabel);
+
+    let ballsWrap = document.createElement("div");
+    ballsWrap.className = "history-balls-wrap";
+
+    roundBalls.forEach(b => {
+      let bEl = document.createElement("div");
+      bEl.className = `mini-h-ball ball-${b.color}`;
+      bEl.innerText = b.num;
+      ballsWrap.appendChild(bEl);
+    });
+
+    row.appendChild(ballsWrap);
+    container.appendChild(row);
+  });
+}
+
+function renderFeatureDiagrams() {
+  let dMove = document.getElementById("diagram-move");
+  if (features.MOVE === 1) {
+    dMove.innerHTML = `
+      <div class="f-mini-grid">
+        <div class="f-dot on-blue"></div><div class="f-dot on-blue"></div><div class="f-dot on-green"></div><div class="f-dot on-green"></div><div class="f-dot on-green"></div>
+        <div class="f-dot on-blue"></div><div class="f-dot on-blue"></div><div class="f-dot"></div><div class="f-dot on-green"></div><div class="f-dot on-green"></div>
+        <div class="f-dot on-blue"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot on-red"></div>
+        <div class="f-dot on-yellow"></div><div class="f-dot on-yellow"></div><div class="f-dot"></div><div class="f-dot on-red"></div><div class="f-dot on-red"></div>
+        <div class="f-dot on-yellow"></div><div class="f-dot on-yellow"></div><div class="f-dot on-yellow"></div><div class="f-dot on-red"></div><div class="f-dot on-red"></div>
+      </div>`;
+  } else if (features.MOVE === 2) {
+    dMove.innerHTML = `
+      <div class="f-mini-grid">
+        <div class="f-dot"></div><div class="f-dot on-blue"></div><div class="f-dot"></div><div class="f-dot on-green"></div><div class="f-dot"></div>
+        <div class="f-dot on-blue"></div><div class="f-dot"></div><div class="f-dot split-green-blue"></div><div class="f-dot"></div><div class="f-dot on-green"></div>
+        <div class="f-dot"></div><div class="f-dot split-green-yellow"></div><div class="f-dot"></div><div class="f-dot split-blue-red"></div><div class="f-dot"></div>
+        <div class="f-dot on-yellow"></div><div class="f-dot"></div><div class="f-dot split-yellow-red"></div><div class="f-dot"></div><div class="f-dot on-red"></div>
+        <div class="f-dot"></div><div class="f-dot on-yellow"></div><div class="f-dot"></div><div class="f-dot on-red"></div><div class="f-dot"></div>
+      </div>`;
+  } else {
+    dMove.innerHTML = `<span class="f-text-icon" style="color:#5588aa;">❖</span>`;
+  }
+
+  let dSpecial = document.getElementById("diagram-special");
+  if (features.SPECIAL === 1 || features.SPECIAL === 2) {
+    dSpecial.innerHTML = `
+      <div class="f-mini-grid">
+        <div class="f-dot on-yellow"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot on-yellow"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot on-yellow"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot on-yellow"></div>
+      </div>`;
+  } else if (features.SPECIAL >= 3) {
+    dSpecial.innerHTML = `<span class="f-text-icon" style="color:#00ffff;">✕</span>`;
+  } else {
+    dSpecial.innerHTML = `<span class="f-text-icon" style="color:#5588aa;">★</span>`;
+  }
+
+  let dGreen = document.getElementById("diagram-green");
+  if (features.GREEN === 1) {
+    dGreen.innerHTML = `
+      <div class="f-mini-grid">
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot on-green"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot on-green"></div><div class="f-dot"></div><div class="f-dot on-green"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot on-green"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+      </div>`;
+  } else if (features.GREEN === 2) {
+    dGreen.innerHTML = `
+      <div class="f-mini-grid">
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot on-yellow"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+      </div>`;
+  } else if (features.GREEN === 3) {
+    dGreen.innerHTML = `<span class="f-text-icon" style="color:#ff9900; font-size:10px;">x2</span>`;
+  } else if (features.GREEN === 4) {
+    dGreen.innerHTML = `<span class="f-text-icon" style="color:#ff0055; font-size:10px;">x3</span>`;
+  } else {
+    dGreen.innerHTML = `<span class="f-text-icon" style="color:#5588aa;">●</span>`;
+  }
+
+  let dYellow = document.getElementById("diagram-yellow");
+  if (features.YELLOW === 1) {
+    dYellow.innerHTML = `<span class="f-text-icon" style="color:#ffd700; font-size:10px;">x2</span>`;
+  } else if (features.YELLOW === 2) {
+    dYellow.innerHTML = `<span class="f-text-icon" style="color:#ffd700; font-size:10px;">x3</span>`;
+  } else if (features.YELLOW === 3) {
+    dYellow.innerHTML = `<span class="f-text-icon" style="color:#ffd700; font-size:10px;">+1</span>`;
+  } else if (features.YELLOW === 4) {
+    dYellow.innerHTML = `<span class="f-text-icon" style="color:#ffd700; font-size:9px;">±1</span>`;
+  } else {
+    dYellow.innerHTML = `<span class="f-text-icon" style="color:#5588aa;">▲</span>`;
+  }
+
+  let dRed = document.getElementById("diagram-red");
+  if (features.RED === 1) {
+    dRed.innerHTML = `
+      <div class="f-mini-grid">
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot on-red"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot on-yellow"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot on-red"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+      </div>`;
+  } else if (features.RED === 2) {
+    dRed.innerHTML = `
+      <div class="f-mini-grid">
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot on-red"></div><div class="f-dot"></div><div class="f-dot on-red"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot on-yellow"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot on-red"></div><div class="f-dot"></div><div class="f-dot on-red"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+      </div>`;
+  } else if (features.RED === 3) {
+    dRed.innerHTML = `
+      <div class="f-mini-grid">
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot on-red"></div><div class="f-dot on-yellow"></div><div class="f-dot on-red"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+      </div>`;
+  } else if (features.RED === 4) {
+    dRed.innerHTML = `
+      <div class="f-mini-grid">
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot on-red"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot on-red"></div><div class="f-dot on-yellow"></div><div class="f-dot on-red"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot on-red"></div><div class="f-dot"></div><div class="f-dot"></div>
+        <div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div><div class="f-dot"></div>
+      </div>`;
+  } else {
+    dRed.innerHTML = `<span class="f-text-icon" style="color:#5588aa;">◆</span>`;
+  }
+}
+
+function updateUI() {
+  document.getElementById("disp-bet").innerText = bet;
+  document.getElementById("disp-credit").innerText = credit;
+
+  document.getElementById("btn-bet1").disabled = (bet === 0 || gamePhase !== "BETTING");
+
+  ["move", "special", "green", "yellow", "red"].forEach(cat => {
+    let key = cat.toUpperCase();
+    let lv = features[key];
+    let box = document.getElementById(`feat-${cat}`);
+    let nameEl = document.getElementById(`name-${cat}`);
+    nameEl.innerText = getFeatureName(key, lv);
+    if (lv > 0) box.classList.add("active");
+    else box.classList.remove("active");
+  });
+
+  renderFeatureDiagrams();
+  updateSpecialPayout();
+
+  let hasSuper = superLineIndices.length > 0;
+  let hasHyper = hyperLineIndices.length > 0;
+
+  let gBadgeX2 = document.getElementById("gBadgeX2");
+  let gBadgeX3 = document.getElementById("gBadgeX3");
+
+  if (hasHyper) {
+    gBadgeX3.className = "g-odds-btn g-odds-x3 active";
+    gBadgeX2.className = "g-odds-btn g-odds-x2";
+  } else if (hasSuper) {
+    gBadgeX2.className = "g-odds-btn g-odds-x2 active";
+    gBadgeX3.className = "g-odds-btn g-odds-x3";
+  } else {
+    gBadgeX2.className = "g-odds-btn g-odds-x2";
+    gBadgeX3.className = "g-odds-btn g-odds-x3";
+  }
+
+  requestAnimationFrame(() => {
+    drawHudOverlay();
+    renderHitNumberOverlay();
+    if (bet > 0 || gameMode === "BONUS" || gameMode === "RIDE") {
+      updateReachDisplay();
+      updateBonusReachDisplay();
+    }
+  });
+}
+
+window.onload = () => {
+  init();
+  window.addEventListener('resize', () => {
+    drawHudOverlay();
+    renderHitNumberOverlay();
+    if (bet > 0 || gameMode === "BONUS" || gameMode === "RIDE") {
+      updateReachDisplay();
+      updateBonusReachDisplay();
+    }
+  });
+};
+</script>
+</body>
+</html>
