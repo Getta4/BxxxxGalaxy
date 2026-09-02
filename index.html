@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>BINGO GALAXY CABINET</title>
+<title>BXXXX GALAXY</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@600;900&family=M+PLUS+1p:wght@900&display=swap');
 
@@ -535,6 +535,7 @@
     text-shadow: 0 0 15px #ff0055, 0 0 25px #ffffff;
   }
 
+
   .feature-result-notice {
     position: absolute;
     inset: -7.5px;
@@ -854,6 +855,51 @@
   .btn-blue { background: radial-gradient(circle at 35% 35%, #29b6f6 0%, #0288d1 70%, #01579b 100%); box-shadow: 0 5px 0 #013a68; }
   .btn-red { background: radial-gradient(circle at 35% 35%, #ff5252 0%, #d32f2f 70%, #b71c1c 100%); box-shadow: 0 5px 0 #7f0000; }
   .btn-green { background: radial-gradient(circle at 35% 35%, #69f0ae 0%, #00c853 70%, #007e33 100%); color: #003311; box-shadow: 0 0 4px #004d1a; }
+
+  .debug-panel {
+    width: 100%;
+    padding: 10px 25px;
+    background: #111827;
+    border-top: 2px solid #64748b;
+    color: #e2e8f0;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .debug-panel summary { cursor: pointer; color: #fbbf24; font-weight: 900; }
+  .debug-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 18px; margin-top: 8px; }
+  .debug-group { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; font-size: 11px; }
+  .debug-group strong { width: 100%; color: #67e8f9; }
+  .debug-bonus-title { margin-top: 8px; color: #67e8f9; font-size: 11px; font-weight: 900; }
+  .debug-bonus-grid { display: grid; grid-template-columns: repeat(5, 30px); gap: 3px; margin-top: 5px; }
+  .debug-bonus-cell { width: 30px; height: 30px; padding: 0 !important; color: #ffd700 !important; background: #021124 !important; border: 1px solid #007799 !important; }
+  .debug-bonus-cell.hit { color: #000 !important; background: #ffbb00 !important; border-color: #fff !important; }
+  .debug-panel input, .debug-panel select, .debug-panel button { font: inherit; }
+  .debug-panel input, .debug-panel select { min-width: 54px; background: #020617; border: 1px solid #475569; color: #f8fafc; padding: 3px; }
+  .debug-panel button { background: #334155; border: 1px solid #94a3b8; color: #fff; padding: 4px 8px; cursor: pointer; }
+  .debug-panel button:hover { background: #475569; }
+  .debug-actions { display: flex; gap: 8px; margin-top: 9px; }
+  .color-bonus-panel { margin-top: 6px; padding: 5px; border: 1px solid #007799; background: rgba(0,0,0,0.4); }
+  .color-bonus-title { color: #ffd700; font-size: 10px; text-align: center; font-weight: 900; }
+  .color-bonus-row { display: grid; grid-template-columns: 42px 1fr 34px; align-items: center; gap: 4px; margin-top: 3px; font-size: 10px; }
+  .color-bonus-row.green { color: #00ff66; }
+  .color-bonus-row.yellow { color: #ffd700; }
+  .color-bonus-row.red { color: #ff6677; }
+  .color-bonus-track { height: 7px; background: #172033; border: 1px solid #42526b; }
+  .color-bonus-fill { height: 100%; width: 0%; transition: width 0.2s; }
+  .color-bonus-row.green .color-bonus-fill { background: #00ff66; }
+  .color-bonus-row.yellow .color-bonus-fill { background: #ffd700; }
+  .color-bonus-row.red .color-bonus-fill { background: #ff3344; }
+  .color-bonus-total { margin-top: 4px; color: #fff; text-align: right; font-size: 10px; }
+  .color-bonus-panel.interrupted { border-color: #ff3344; opacity: 0.7; }
+  .color-bonus-stage { display: grid; grid-template-columns: 1fr 42px; align-items: center; gap: 4px; min-height: 20px; border-top: 1px solid #07506b; font-size: 10px; }
+  .color-bonus-stage:first-of-type { border-top: 0; }
+  .color-bonus-stage.reached { background: rgba(255, 215, 0, 0.12); }
+  .color-bonus-balls { display: flex; gap: 3px; }
+  .color-bonus-ball { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #718096; box-shadow: inset -2px -2px 3px rgba(0,0,0,0.45); }
+  .color-bonus-ball.green { background: #00c853; border-color: #00ff66; }
+  .color-bonus-ball.yellow { background: #ffd700; border-color: #fff176; }
+  .color-bonus-ball.red { background: #e53935; border-color: #ff7777; }
+  .color-bonus-stage-payout { color: #f8fafc; text-align: right; font-family: 'Orbitron', sans-serif; font-weight: 900; }
+  @media (max-width: 700px) { .debug-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -898,13 +944,22 @@
         </div>
 
         <div class="cyber-panel history-box">
-          <div class="panel-header">HISTORY</div>
+          <div class="panel-header" id="historyPanelHeader">HISTORY</div>
           <div class="current-balls">
             <div class="h-ball" id="b-0">-</div>
             <div class="h-ball" id="b-1">-</div>
             <div class="h-ball" id="b-2">-</div>
             <div class="h-ball" id="b-3">-</div>
             <div class="h-ball" id="b-4">-</div>
+          </div>
+          <div class="color-bonus-panel" id="colorBonusPanel">
+            <div class="color-bonus-title">COLOR BONUS</div>
+            <div class="color-bonus-stage" data-stage="5"><span class="color-bonus-balls" id="colorBonusStage5Balls"></span><span class="color-bonus-stage-payout" id="colorBonusStage5Payout"></span></div>
+            <div class="color-bonus-stage" data-stage="4"><span class="color-bonus-balls" id="colorBonusStage4Balls"></span><span class="color-bonus-stage-payout" id="colorBonusStage4Payout"></span></div>
+            <div class="color-bonus-stage" data-stage="3"><span class="color-bonus-balls" id="colorBonusStage3Balls"></span><span class="color-bonus-stage-payout" id="colorBonusStage3Payout"></span></div>
+            <div class="color-bonus-stage" data-stage="2"><span class="color-bonus-balls" id="colorBonusStage2Balls"></span><span class="color-bonus-stage-payout" id="colorBonusStage2Payout"></span></div>
+            <div class="color-bonus-stage" data-stage="1"><span class="color-bonus-balls" id="colorBonusStage1Balls"></span><span class="color-bonus-stage-payout" id="colorBonusStage1Payout"></span></div>
+            <div class="color-bonus-total">COLOR WIN: <span id="colorBonusTotal">0</span></div>
           </div>
           <div class="history-list-container" id="historyListContainer"></div>
         </div>
@@ -973,14 +1028,14 @@
     <div class="screen-counter-bar">
       <div>BET: <span id="disp-bet">0</span></div>
       <div>WIN: <span id="disp-win">0</span></div>
-      <div>CREDIT: <span id="disp-credit">100</span></div>
+      <div>CREDIT: <span id="disp-credit">1000</span></div>
     </div>
   </div>
 
   <!-- 【下部】コントロールパネル -->
   <div class="bottom-control-panel">
     <div class="panel-left-deco">
-      <div class="brand-logo">BINGO GALAXY</div>
+      <div class="brand-logo">BXXXX GALAXY</div>
       <button class="btn-arcade-action btn-red" id="btn-ride" onclick="startRideGame()" style="display:none; width: 130px; border-radius: 8px; height: 32px;">
         RIDE GAME
       </button>
@@ -1005,15 +1060,69 @@
     </div>
   </div>
 
+  <details class="debug-panel" hidden>
+    <summary>DEBUG MODE</summary>
+    <div class="debug-grid">
+      <div class="debug-group">
+        <strong>次回ボール 数字</strong>
+        <label>1 <input id="debug-num-1" type="number" min="1" max="25" placeholder="自動"></label>
+        <label>2 <input id="debug-num-2" type="number" min="1" max="25" placeholder="自動"></label>
+        <label>3 <input id="debug-num-3" type="number" min="1" max="25" placeholder="自動"></label>
+        <label>4 <input id="debug-num-4" type="number" min="1" max="25" placeholder="自動"></label>
+        <label>5 <input id="debug-num-5" type="number" min="1" max="25" placeholder="自動"></label>
+      </div>
+      <div class="debug-group">
+        <strong>4・5球目 色</strong>
+        <label>4球目 <select id="debug-color-4"><option value="">自動</option><option value="yellow">黄</option><option value="green">緑</option></select></label>
+        <label>5球目 <select id="debug-color-5"><option value="">自動</option><option value="red">赤</option><option value="green">緑</option></select></label>
+      </div>
+      <div class="debug-group">
+        <strong>FEATURE</strong>
+        <label>MOVE <select id="debug-feature-MOVE"><option value="auto">AUTO</option><option value="0">NORMAL</option><option value="1">5-SPOTS</option><option value="2">4-DIAMOND</option></select></label>
+        <label>SPECIAL <select id="debug-feature-SPECIAL"><option value="auto">AUTO</option><option value="0">NONE</option><option value="1">4-CORNER</option><option value="2">HI 4-CORNER</option><option value="3">SLASH</option><option value="4">FULL SLASH</option></select></label>
+        <label>GREEN <select id="debug-feature-GREEN"><option value="auto">AUTO</option><option value="0">NONE</option><option value="1">BONUS FREE</option><option value="2">BONUS CENTER</option><option value="3">SUPER LINE+</option><option value="4">HYPER LINE</option></select></label>
+        <label>YELLOW <select id="debug-feature-YELLOW"><option value="auto">AUTO</option><option value="0">NONE</option><option value="1">ODDS UP</option><option value="2">SUPER ODDS UP</option><option value="3">W.NUMBERS</option><option value="4">T.NUMBERS</option></select></label>
+        <label>RED <select id="debug-feature-RED"><option value="auto">AUTO</option><option value="0">NONE</option><option value="1">RED LENGTH</option><option value="2">RED X</option><option value="3">RED SIDE</option><option value="4">RED CROSS</option></select></label>
+      </div>
+    </div>
+    <div class="debug-actions">
+      <button type="button" onclick="applyDebugSettings()">設定を適用</button>
+      <button type="button" onclick="debugStartBonus()">BONUS開始</button>
+      <button type="button" onclick="debugResetBonus()">BONUS初期化</button>
+      <button type="button" onclick="clearDebugSettings()">設定をリセット</button>
+    </div>
+    <div class="debug-bonus-title">BONUS CARD（クリックで仮設定）</div>
+    <div class="debug-bonus-grid" id="debugBonusGrid"></div>
+  </details>
+
 </div>
 
 <script>
-let credit = 10000;
+let credit = 1000;
 let bet = 0;
 let oddsValue = 10;
 let lastWin = 0;
+const MAX_BET = 1000;
+let whiteOdds = null;
+let whiteOddsConfirmed = false;
+const WHITE_SPOT_MULTIPLIERS = { 3: 2, 4: 6, 5: 16 };
+let debugBallNumbers = [null, null, null, null, null];
+let debugBallColors = [null, null, null, null, null];
+let debugEnabled = false;
+let debugBonusDraft = Array(5).fill(null).map(() => Array(5).fill(false));
+let oddsFeatureMultiplier = 1;
+let bonusStage = 0;
+let colorBonus = 0;
+let colorBonusSteps = { GREEN: 0, YELLOW: 0, RED: 0 };
+let colorBonusInterrupted = false;
+let colorBonusPayout = 0;
+let bonusBetMultiplier = 1;
+let colorBonusBonusBetAmount = 0;
+let colorBonusBetRecords = [];
+let jackpotResult = "";
 let gamePhase = "BETTING";
 let gameMode = "NORMAL";
+let rideDisabledAfterBonus = false;
 let rideMultiplier = 2.0;
 let isAnimating = false;
 let betTimer = null;
@@ -1028,6 +1137,8 @@ let superLineIndices = [];
 let hyperLineIndices = [];
 
 let drawnBallsData = [];
+let bonusAddedNumbers = new Set();
+let completedBingoLineKeys = new Set();
 let pastHistoryData = [];
 
 let reachFadeTimer = null;
@@ -1088,6 +1199,8 @@ function init() {
   renderOddsTable();
   renderGrid();
   renderBonusGrid();
+  debugBonusDraft = bonusGrid.map(row => row.slice());
+  renderDebugBonusGrid();
   renderHistory();
   setHudZoneVisibility(true);
   updateUI();
@@ -1167,45 +1280,137 @@ function renderOddsTable() {
   const panelHeader = document.getElementById("oddsPanelHeader");
   tbody.innerHTML = "";
 
-  if (gameMode === "RIDE") {
-    panelHeader.innerText = `RIDE [x${rideMultiplier}]`;
+  if (gameMode === "RIDE" || gameMode === "BONUS") {
+    panelHeader.innerText = gameMode === "RIDE" ? `RIDE [x${rideMultiplier}]` : "BONUS ODDS";
     maxHeader.style.display = "none";
 
     let tr = document.createElement("tr");
     tr.className = "odds-row-highlight";
-    tr.innerHTML = `<td>${oddsValue}</td><td>${oddsValue * 3}</td><td>${oddsValue * 8}</td>`;
+    tr.innerHTML = `<td>${getPayoutForSpot(3)}</td><td>${getPayoutForSpot(4)}</td><td>${getPayoutForSpot(5)}</td>`;
     tbody.appendChild(tr);
     return;
   }
 
   panelHeader.innerText = "ODDS";
-  let minVal, maxVal;
-  if (oddsValue <= 100) {
-    minVal = 10; maxVal = 100;
+  const rangeStart = oddsValue <= 100 ? 10 : oddsValue <= 200 ? 110 : 210;
+  const rangeEnd = oddsValue <= 100 ? 100 : oddsValue <= 200 ? 200 : 300;
+
+  if (oddsValue <= 200) {
     maxHeader.style.display = "table";
-  } else if (oddsValue <= 200) {
-    minVal = 110; maxVal = 200;
-    maxHeader.style.display = "table";
+    maxHeader.innerHTML = `<tbody><tr><td style="color:#d88cff;">300</td><td style="color:#d88cff;">900</td><td style="color:#d88cff;">2400</td></tr></tbody>`;
   } else {
-    minVal = 210; maxVal = 300;
     maxHeader.style.display = "none";
   }
 
-  for (let val = maxVal; val >= minVal; val -= 10) {
+  for (let value = rangeEnd; value >= rangeStart; value -= 10) {
     let tr = document.createElement("tr");
-    tr.id = `odds-row-${val}`;
-    tr.setAttribute("data-val", val);
-    if (val === oddsValue) {
-      tr.className = "odds-row-highlight";
-    }
-    tr.innerHTML = `<td>${val}</td><td>${val * 3}</td><td>${val * 8}</td>`;
+    const color = getOddsColor(value);
+    if (value === oddsValue) tr.className = "odds-row-highlight";
+    const isWhite = whiteOdds && whiteOdds.value === value;
+    const cellColor = isWhite ? "#ffffff" : color.css;
+    const whiteDisplay = isWhite && !whiteOddsConfirmed;
+    tr.innerHTML = `<td style="color:${cellColor};">${whiteDisplay ? "x2" : getPayoutForOdds(value, 3)}</td><td style="color:${cellColor};">${whiteDisplay ? "x6" : getPayoutForOdds(value, 4)}</td><td style="color:${cellColor};">${whiteDisplay ? "x16" : getPayoutForOdds(value, 5)}</td>`;
     tbody.appendChild(tr);
   }
 }
 
+function getOddsRow() {
+  return { values: [oddsValue, oddsValue * 3, oddsValue * 8] };
+}
+
+function getOddsColor(value) {
+  if (value >= 250) return { name: "紫", css: "#d88cff" };
+  if (value >= 190) return { name: "赤", css: "#ff6677" };
+  if (value >= 130) return { name: "黄", css: "#ffd700" };
+  if (value >= 70) return { name: "緑", css: "#00ff66" };
+  return { name: "青", css: "#00e5ff" };
+}
+
+function createWhiteOdds() {
+  const whiteValue = 20 + Math.floor(Math.random() * 28) * 10;
+  return { value: whiteValue };
+}
+
+function getPayoutForOdds(value, spotCount) {
+  const base = value * (spotCount === 3 ? 1 : spotCount === 4 ? 3 : 8);
+  const whiteMultiplier = whiteOdds && whiteOdds.value === value ? WHITE_SPOT_MULTIPLIERS[spotCount] : 1;
+  return Math.floor(base * whiteMultiplier * oddsFeatureMultiplier);
+}
+
+function getPayoutForSpot(spotCount) {
+  if (gameMode === "RIDE") return oddsValue * (spotCount === 3 ? 1 : spotCount === 4 ? 3 : 8);
+  return getPayoutForOdds(oddsValue, spotCount);
+}
+
+function applyDebugSettings() {
+  debugEnabled = true;
+  bonusGrid = debugBonusDraft.map(row => row.slice());
+  debugBallNumbers = [1, 2, 3, 4, 5].map(index => {
+    const value = Number(document.getElementById(`debug-num-${index}`).value);
+    return value >= 1 && value <= 25 ? value : null;
+  });
+  debugBallColors = [null, null, null,
+    document.getElementById("debug-color-4").value || null,
+    document.getElementById("debug-color-5").value || null
+  ];
+  ["MOVE", "SPECIAL", "GREEN", "YELLOW", "RED"].forEach(key => {
+    const value = document.getElementById(`debug-feature-${key}`).value;
+    if (value !== "auto") features[key] = Number(value);
+    if (key === "SPECIAL" && value !== "auto") {
+      featureBranches.SPECIAL = features.SPECIAL >= 3 ? "SLASH" : features.SPECIAL > 0 ? "CORNER" : null;
+    }
+    if (key === "GREEN" && value !== "auto") {
+      featureBranches.GREEN = features.GREEN >= 3 ? "LINE" : features.GREEN > 0 ? "BONUS" : null;
+    }
+    if (key === "YELLOW" && value !== "auto") {
+      featureBranches.YELLOW = features.YELLOW >= 3 ? "NUMBERS" : features.YELLOW > 0 ? "ODDS" : null;
+    }
+    if (key === "RED" && value !== "auto") {
+      featureBranches.RED = features.RED >= 3 ? "SIDE" : features.RED > 0 ? "LENGTH" : null;
+    }
+  });
+  renderGrid();
+  renderBonusGrid();
+  renderDebugBonusGrid();
+  updateUI();
+}
+
+function clearDebugSettings() {
+  debugEnabled = false;
+  debugBallNumbers = [null, null, null, null, null];
+  debugBallColors = [null, null, null, null, null];
+  debugBonusDraft = bonusGrid.map(row => row.slice());
+  document.querySelectorAll(".debug-panel input").forEach(input => input.value = "");
+  document.querySelectorAll(".debug-panel select").forEach(select => {
+    if (select.id.includes("color")) select.value = "";
+    else select.value = "auto";
+  });
+  features = { MOVE: 0, SPECIAL: 0, GREEN: 0, YELLOW: 0, RED: 0 };
+  featureBranches = { SPECIAL: null, GREEN: null, YELLOW: null, RED: null };
+  renderGrid();
+  renderBonusGrid();
+  renderDebugBonusGrid();
+  updateUI();
+}
+
+function toggleDebugVisibility() {
+  const debugPanel = document.querySelector(".debug-panel");
+  if (debugPanel) debugPanel.hidden = !debugPanel.hidden;
+}
+
+document.addEventListener("keydown", event => {
+  if (event.key === "F9" && !event.repeat && !event.target.matches("input, select, textarea")) {
+    toggleDebugVisibility();
+  }
+});
+
 function startBetCountdown() {
   clearInterval(betTimer);
   let timeLeft = 30;
+
+  whiteOddsConfirmed = false;
+  whiteOdds = Math.random() < 0.35 ? createWhiteOdds() : null;
+  renderOddsTable();
   
   document.getElementById("frontCountdown").innerText = timeLeft;
   document.getElementById("betFrontNotice").style.display = "flex";
@@ -1279,6 +1484,7 @@ function clearSpecialPayout() {
 
 function updateSpecialPayout() {
   const payout = document.getElementById("specialPayout");
+  if (gameMode === "RIDE") return;
   if (featureBranches.SPECIAL !== "CORNER" || features.SPECIAL === 0) {
     payout.innerText = "";
     return;
@@ -1386,6 +1592,22 @@ function getReachSpots() {
       if (isReach) {
         reachCoords.push({ r, c });
       }
+    }
+  }
+
+  if (gameMode === "RIDE") {
+    const jackpotSpots = [[0, 2], [4, 2], [2, 0], [2, 4]];
+    const jackpotCount = jackpotSpots.filter(([r, c]) => grid[r][c].hit).length;
+    const addJackpotReach = ([r, c]) => {
+      if (!grid[r][c].hit && !reachCoords.some(pos => pos.r === r && pos.c === c)) {
+        reachCoords.push({ r, c });
+      }
+    };
+
+    if (jackpotCount === 3) {
+      jackpotSpots.filter(([r, c]) => !grid[r][c].hit).forEach(addJackpotReach);
+    } else if (bet < 600 && jackpotCount === 4 && !grid[2][2].hit) {
+      addJackpotReach([2, 2]);
     }
   }
 
@@ -1827,8 +2049,8 @@ function rotateZone(zoneKey) {
 }
 
 function addBet(amt) {
-  if (gamePhase !== "BETTING" || credit < amt) return;
-  if (bet === 0 && amt < 10) return;
+  if (gameMode === "RIDE" || gamePhase !== "BETTING" || credit < amt || bet + amt > MAX_BET) return;
+  if (gameMode !== "BONUS" && bet === 0 && amt < 10) return;
 
   if (bet === 0) {
     document.getElementById("disp-win").innerText = 0;
@@ -1842,6 +2064,16 @@ function addBet(amt) {
   }
 
   document.getElementById("betFrontNotice").style.display = "none";
+
+  if (gameMode === "BONUS") {
+    colorBonusBetRecords.push({ amount: amt, bonus: Math.random() < 0.2 });
+    colorBonusBonusBetAmount = colorBonusBetRecords
+      .filter(record => record.bonus)
+      .reduce((total, record) => total + record.amount, 0);
+    updateColorBonusDisplay();
+    updateUI();
+    return;
+  }
 
   const oddsChance = (amt >= 10) ? 0.50 : 0.12;
   if (Math.random() < oddsChance && oddsValue < 300) {
@@ -1889,6 +2121,9 @@ async function rollSingleBall(ballIndex, availablePool) {
   } else if (ballIndex === 4) {
     ballColor = (Math.random() < 0.7) ? 'red' : 'green';
   }
+  if (debugEnabled && debugBallColors[ballIndex]) {
+    ballColor = debugBallColors[ballIndex];
+  }
 
   if (ballIndex >= 3) {
     bEl.className = `h-ball rolling ball-${ballColor}`;
@@ -1906,7 +2141,9 @@ async function rollSingleBall(ballIndex, availablePool) {
     await new Promise(res => setTimeout(res, delay));
   }
 
-  let finalIdx = Math.floor(Math.random() * availablePool.length);
+  let requestedNumber = debugEnabled ? debugBallNumbers[ballIndex] : null;
+  let requestedIndex = requestedNumber === null ? -1 : availablePool.indexOf(requestedNumber);
+  let finalIdx = requestedIndex >= 0 ? requestedIndex : Math.floor(Math.random() * availablePool.length);
   let finalBall = availablePool.splice(finalIdx, 1)[0];
   bEl.innerText = finalBall;
   bEl.className = `h-ball active ball-${ballColor}`;
@@ -1916,9 +2153,14 @@ async function rollSingleBall(ballIndex, availablePool) {
 
 async function startGame() {
   clearInterval(betTimer);
+  if (gameMode !== "BONUS") rideDisabledAfterBonus = false;
   document.getElementById("betFrontNotice").style.display = "none";
   clearFeatureResult();
   clearSpecialPayout();
+  if (debugEnabled) applyDebugSettings();
+  updateSpecialPayout();
+  whiteOddsConfirmed = true;
+  renderOddsTable();
 
   gamePhase = "DRAWING_1_3";
   let hasBet = (bet >= 10 || gameMode === "BONUS" || gameMode === "RIDE");
@@ -1938,6 +2180,8 @@ async function startGame() {
   }
 
   drawnBallsData = [];
+  bonusAddedNumbers = new Set();
+  completedBingoLineKeys = new Set();
   let available = Array.from({length: 25}, (_, i) => i + 1);
 
   // 1〜3球目抽選
@@ -1946,6 +2190,7 @@ async function startGame() {
     drawnBallsData.push(ballData);
 
     activateSpot(ballData.num);
+    if (gameMode === "BONUS") processColorBonus(i, ballData);
 
     renderGrid();
     if (hasBet) {
@@ -1984,9 +2229,6 @@ async function startGame() {
     }
   }
 
-  if (hasBet && checkBingoAtStage()) {
-    await new Promise(r => setTimeout(r, 2500));
-  }
   updateSpecialCornerResult();
 
   // 3球目終了時 ROTATIONタイム (25秒ウェイト)
@@ -2023,6 +2265,10 @@ async function startGame() {
   document.getElementById("ballPhaseText").innerText = hasBet ? "ROTATION LOCKED! 運命の4・5球目へ" : "4・5球目 抽選へ";
   await new Promise(r => setTimeout(r, 1000));
 
+  if (hasBet && checkBingoAtStage()) {
+    await new Promise(r => setTimeout(r, 2500));
+  }
+
   // 4・5球目抽選
   gamePhase = "DRAWING_4_5";
   for (let i = 3; i < 5; i++) {
@@ -2030,6 +2276,7 @@ async function startGame() {
     drawnBallsData.push(ballData);
 
     activateSpot(ballData.num);
+    if (gameMode === "BONUS") processColorBonus(i, ballData);
     renderGrid();
     if (hasBet) {
       if (i === 3) updateReachDisplay();
@@ -2109,15 +2356,18 @@ function applyGreenFeature() {
 
 function applyYellowFeature(ballNum) {
   if (featureBranches.YELLOW === "ODDS" && features.YELLOW === 1) {
-    oddsValue = Math.min(300, oddsValue * 2);
+    oddsFeatureMultiplier = 2;
     renderOddsTable();
   } else if (featureBranches.YELLOW === "ODDS" && features.YELLOW === 2) {
-    oddsValue = Math.min(300, oddsValue * 3);
+    oddsFeatureMultiplier = 3;
     renderOddsTable();
   }
-  if (featureBranches.YELLOW === "NUMBERS" && features.YELLOW === 3) activateSpot(ballNum + 1);
-  if (featureBranches.YELLOW === "NUMBERS" && features.YELLOW === 4) { activateSpot(ballNum - 1); activateSpot(ballNum + 1); }
+  if (featureBranches.YELLOW === "NUMBERS" && features.YELLOW === 3) activateSpot(getNextNumber(ballNum));
+  if (featureBranches.YELLOW === "NUMBERS" && features.YELLOW === 4) { activateSpot(getPreviousNumber(ballNum)); activateSpot(getNextNumber(ballNum)); }
 }
+
+function getNextNumber(num) { return num === 25 ? 1 : num + 1; }
+function getPreviousNumber(num) { return num === 1 ? 25 : num - 1; }
 
 function applyRedFeature(ballNum) {
   let target = null;
@@ -2140,6 +2390,61 @@ function applyRedFeature(ballNum) {
   });
 }
 
+function getColorBonusPayout(step) {
+  const basePayout = [0, 0, 3, 10, 300, 1500][Math.min(5, step)] || 0;
+  const betRate = [0, 0.2, 0.5, 1, 5, 50][Math.min(5, step)] || 0;
+  const regularBetAmount = colorBonusBetRecords
+    .filter(record => !record.bonus)
+    .reduce((total, record) => total + record.amount, 0);
+  const addedPayout = Math.ceil(regularBetAmount * betRate);
+  const bonusPayout = colorBonusBetRecords
+    .filter(record => record.bonus)
+    .reduce((total, record) => total + Math.ceil(record.amount * betRate * 1.2), 0);
+  return Math.min(9999, basePayout + addedPayout + bonusPayout);
+}
+
+function updateColorBonusDisplay() {
+  for (let stage = 1; stage <= 5; stage++) {
+    const balls = document.getElementById(`colorBonusStage${stage}Balls`);
+    const payout = document.getElementById(`colorBonusStage${stage}Payout`);
+    const stageRow = document.querySelector(`.color-bonus-stage[data-stage="${stage}"]`);
+    if (!balls || !payout || !stageRow) continue;
+
+    balls.innerHTML = "";
+    const greenCount = Math.min(3, stage);
+    for (let index = 0; index < greenCount; index++) {
+      balls.innerHTML += '<span class="color-bonus-ball green"></span>';
+    }
+    if (stage >= 4) balls.innerHTML += '<span class="color-bonus-ball yellow"></span>';
+    if (stage >= 5) balls.innerHTML += '<span class="color-bonus-ball red"></span>';
+    payout.innerText = Math.min(9999, getColorBonusPayout(stage));
+    stageRow.classList.toggle("reached", colorBonus >= stage);
+  }
+  const panel = document.getElementById("colorBonusPanel");
+  if (panel) panel.classList.toggle("interrupted", colorBonusInterrupted);
+  const total = document.getElementById("colorBonusTotal");
+  if (total) total.innerText = Math.min(9999, colorBonusPayout);
+}
+
+function processColorBonus(ballIndex, ballData) {
+  if (colorBonusInterrupted) return;
+  const isMultipleOfFive = isYellowRedSpot(ballData.num);
+  const isInterrupted = (ballIndex < 3 && isMultipleOfFive) ||
+    (ballIndex === 3 && (ballData.color === "green" || (ballData.color === "yellow" && !isMultipleOfFive))) ||
+    (ballIndex === 4 && (ballData.color === "green" || (ballData.color === "red" && !isMultipleOfFive)));
+  if (isInterrupted) {
+    colorBonusInterrupted = true;
+    updateColorBonusDisplay();
+    return;
+  }
+
+  const color = ballIndex < 3 ? "GREEN" : ballIndex === 3 ? "YELLOW" : "RED";
+  colorBonusSteps[color] = Math.min(5, colorBonusSteps[color] + 1);
+  colorBonus = Math.min(5, colorBonus + 1);
+  colorBonusPayout = Math.min(9999, getColorBonusPayout(colorBonus));
+  updateColorBonusDisplay();
+}
+
 function getBingoWinningNums() {
   const winningNums = new Set();
   getAllLines().forEach(line => {
@@ -2152,12 +2457,25 @@ function getBingoWinningNums() {
   return winningNums;
 }
 
+function getCompletedBingoLines() {
+  return getAllLines().filter(line => getMaxConsecutiveHits(line, grid) >= 3);
+}
+
 function checkBingoAtStage() {
-  const winningNums = getBingoWinningNums();
-  const isBingo = winningNums.size > 0;
-  if (isBingo) {
+  const completedLines = getCompletedBingoLines();
+  const newLines = completedLines.filter(line => {
+    const key = line.map(({r, c}) => `${r}-${c}`).join("|");
+    if (completedBingoLineKeys.has(key)) return false;
+    completedBingoLineKeys.add(key);
+    return true;
+  });
+  const isBingo = completedLines.length > 0;
+  if (newLines.length > 0) {
     document.getElementById("ballPhaseText").innerText = "BINGO!";
-    updateBonusCard(winningNums);
+    const triggerBall = drawnBallsData[drawnBallsData.length - 1];
+    if (triggerBall && newLines.some(line => line.some(({r, c}) => grid[r][c].num === triggerBall.num))) {
+      updateBonusCard(new Set([triggerBall.num]));
+    }
   }
   return isBingo;
 }
@@ -2196,8 +2514,8 @@ function calculateCurrentWin() {
     const maxConsecutive = getMaxConsecutiveHits(line, grid);
     if (maxConsecutive < 3) return;
 
-    const multiplier = maxConsecutive === 3 ? 1 : (maxConsecutive === 4 ? 3 : 8);
-    const lineBasePayout = oddsValue * multiplier;
+    const spotCount = maxConsecutive === 3 ? 3 : (maxConsecutive === 4 ? 4 : 5);
+    const lineBasePayout = getPayoutForSpot(spotCount);
     const lineMult = hyperLineIndices.includes(idx) ? 3 : (superLineIndices.includes(idx) ? 2 : 1);
     totalWin += lineBasePayout * lineMult;
     line.forEach(({r, c}) => {
@@ -2208,7 +2526,24 @@ function calculateCurrentWin() {
   if (gameMode !== "RIDE" && featureBranches.SPECIAL === "CORNER" && features.SPECIAL >= 1) {
     const corners = [[0,0], [0,4], [4,0], [4,4]];
     if (corners.every(([r, c]) => grid[r][c].hit)) {
-      totalWin += oddsValue * (features.SPECIAL === 2 ? 6 : 3);
+      totalWin += getOddsRow().values[0] * oddsFeatureMultiplier * (features.SPECIAL === 2 ? 6 : 3);
+    }
+  }
+
+  if (gameMode === "BONUS") totalWin += colorBonusPayout;
+  if (gameMode === "RIDE") {
+    const jackpotSpots = [[0, 2], [4, 2], [2, 0], [2, 4]];
+    const jackpotCount = jackpotSpots.filter(([r, c]) => grid[r][c].hit).length;
+    const centerHit = grid[2][2].hit;
+    if (bet >= 600 && jackpotCount === 4) {
+      jackpotResult = "SUPER JACKPOT";
+      totalWin += bet * 50;
+    } else if (bet < 600 && jackpotCount === 4 && centerHit) {
+      jackpotResult = "SUPER JACKPOT";
+      totalWin += 30000;
+    } else if (jackpotCount === 4) {
+      jackpotResult = "JACKPOT";
+      totalWin += bet * 50;
     }
   }
 
@@ -2234,9 +2569,11 @@ function evaluateGame() {
     lastWin = totalWin;
     document.getElementById("disp-win").innerText = totalWin;
     document.getElementById("disp-credit").innerText = credit;
-    document.getElementById("ballPhaseText").innerText = totalWin > 0 ? `WIN ${totalWin}` : "LOSE";
+    document.getElementById("ballPhaseText").innerText = jackpotResult
+      ? `${jackpotResult} ${totalWin}`
+      : (totalWin > 0 ? `WIN ${totalWin}` : "LOSE");
+    if (gameMode === "BONUS") rideDisabledAfterBonus = true;
 
-    updateBonusCard(winningNums);
   } else {
     document.getElementById("ballPhaseText").innerText = "NO BET GAME OVER";
   }
@@ -2252,9 +2589,9 @@ function evaluateGame() {
   }
 
   if (hasBet && gameMode !== "RIDE" && checkBonusGame()) {
-    triggerBonusGame();
+    triggerBonusGame(winningNums);
   } else {
-    if (totalWin > 0) {
+    if (totalWin > 0 && gameMode !== "BONUS") {
       document.getElementById("btn-ride").style.display = "block";
     }
     resetRound();
@@ -2265,7 +2602,8 @@ function evaluateGame() {
 function updateBonusCard(winningNums) {
   let lateBalls = drawnBallsData.slice(2).map(b => b.num);
   winningNums.forEach(num => {
-    if (lateBalls.includes(num)) {
+    if (lateBalls.includes(num) && !bonusAddedNumbers.has(num)) {
+      bonusAddedNumbers.add(num);
       for (let r = 0; r < 5; r++) {
         for (let c = 0; c < 5; c++) {
           if (bonusNumbers[r][c] === num) bonusGrid[r][c] = true;
@@ -2283,28 +2621,59 @@ function checkBonusGame() {
   return false;
 }
 
-function triggerBonusGame() {
+function triggerBonusGame(winningNums = new Set()) {
   alert("★ BONUS GAME START! 全フィーチャー全開放 ★");
   gameMode = "BONUS";
-  bonusGrid = Array(5).fill(null).map(() => Array(5).fill(false));
-  features = { MOVE: 2, SPECIAL: 4, GREEN: 4, YELLOW: 4, RED: 4 };
-  featureBranches = { SPECIAL: "CORNER", GREEN: "BONUS", YELLOW: "ODDS", RED: "LENGTH" };
-  bet = 50;
+  bonusStage = Math.min(2, bonusStage + 1);
+  colorBonus = 0;
+  colorBonusSteps = { GREEN: 0, YELLOW: 0, RED: 0 };
+  colorBonusInterrupted = false;
+  colorBonusPayout = 0;
+  bonusBetMultiplier = 1;
+  colorBonusBonusBetAmount = 0;
+  colorBonusBetRecords = [];
+  for (let r = 0; r < 5; r++) {
+    for (let c = 0; c < 5; c++) {
+      if (winningNums.has(bonusNumbers[r][c])) {
+        bonusGrid[r][c] = false;
+        bonusAddedNumbers.delete(bonusNumbers[r][c]);
+      }
+    }
+  }
+  const upperStage = bonusStage >= 2;
+  const randomLevel = upperStage ? () => [2, 4][Math.floor(Math.random() * 2)] : () => 1;
+  features = { MOVE: [1, 2][Math.floor(Math.random() * 2)], SPECIAL: randomLevel(), GREEN: randomLevel(), YELLOW: randomLevel(), RED: randomLevel() };
+  featureBranches = {
+    SPECIAL: features.SPECIAL >= 3 ? "SLASH" : "CORNER",
+    GREEN: features.GREEN >= 3 ? "LINE" : "BONUS",
+    YELLOW: features.YELLOW >= 3 ? "NUMBERS" : "ODDS",
+    RED: features.RED >= 3 ? "SIDE" : "LENGTH"
+  };
+  bet = 0;
   oddsValue = 300;
+  oddsFeatureMultiplier = 1;
+  whiteOdds = null;
+  whiteOddsConfirmed = false;
   resetLinesToDefault();
   renderOddsTable();
   resetRound(true);
 }
 
 async function startRideGame() {
+  if (gameMode === "RIDE" || gameMode === "BONUS" || rideDisabledAfterBonus) return;
   document.getElementById("disp-win").innerText = 0;
   gameMode = "RIDE";
-  bet = lastWin;
-  credit = Math.max(0, credit - lastWin);
+  whiteOdds = null;
+  whiteOddsConfirmed = true;
+  bet = Math.min(lastWin, MAX_BET);
+  credit = Math.max(0, credit - bet);
   document.getElementById("disp-credit").innerText = credit;
   document.getElementById("disp-bet").innerText = bet;
 
   document.getElementById("btn-ride").style.display = "none";
+  document.getElementById("btn-bet1").disabled = true;
+  document.getElementById("btn-bet10").disabled = true;
+  document.getElementById("btn-start").disabled = true;
   features = { MOVE: 0, SPECIAL: 0, GREEN: 0, YELLOW: 0, RED: 0 };
   featureBranches = { SPECIAL: null, GREEN: null, YELLOW: null, RED: null };
   resetLinesToDefault();
@@ -2313,8 +2682,8 @@ async function startRideGame() {
   let rVal = document.getElementById("rideRouletteValue");
   rNotice.style.display = "flex";
 
-  const multPool = [2.0, 2.0, 2.0, 1.5, 1.5, 3.0, 3.0, 4.0, 5.0];
-  const multDisplayList = [1.5, 2.0, 3.0, 4.0, 5.0];
+  const multPool = [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 1.5, 1.5, 1.5, 1.5, 1.5, 3.0, 3.0, 5.0];
+  const multDisplayList = [1.5, 2.0, 3.0, 5.0];
 
   for (let t = 0; t < 22; t++) {
     let temp = multDisplayList[Math.floor(Math.random() * multDisplayList.length)];
@@ -2337,8 +2706,20 @@ async function startRideGame() {
 function resetRound(keepMode = false) {
   if (!keepMode) {
     gameMode = "NORMAL";
+    bonusStage = 0;
     bet = 0;
     oddsValue = 10;
+    whiteOdds = null;
+    whiteOddsConfirmed = false;
+    oddsFeatureMultiplier = 1;
+    jackpotResult = "";
+    colorBonus = 0;
+    colorBonusSteps = { GREEN: 0, YELLOW: 0, RED: 0 };
+    colorBonusInterrupted = false;
+    colorBonusPayout = 0;
+    bonusBetMultiplier = 1;
+    colorBonusBonusBetAmount = 0;
+    colorBonusBetRecords = [];
     resetLinesToDefault();
     renderOddsTable();
     features = { MOVE: 0, SPECIAL: 0, GREEN: 0, YELLOW: 0, RED: 0 };
@@ -2354,8 +2735,8 @@ function resetRound(keepMode = false) {
   if (gameMode !== "RIDE") {
     startBetCountdown();
   }
-  document.getElementById("btn-start").disabled = false;
-  document.getElementById("btn-bet10").disabled = false;
+  document.getElementById("btn-start").disabled = !(gameMode === "BONUS" || gameMode === "RIDE" || bet >= 10);
+  document.getElementById("btn-bet10").disabled = credit < 10 || bet + 10 > MAX_BET;
 }
 
 function renderGrid() {
@@ -2391,6 +2772,7 @@ function renderBonusGrid() {
       d.id = `bcell-${r}-${c}`;
       d.className = "b-cell" + (bonusGrid[r][c] ? " hit" : "");
       d.innerText = bonusNumbers[r][c];
+      if (debugEnabled) d.onclick = () => debugToggleBonusCell(r, c);
       container.appendChild(d);
     }
   }
@@ -2400,8 +2782,35 @@ function renderBonusGrid() {
   });
 }
 
+function debugToggleBonusCell(row, column) {
+  debugBonusDraft[row][column] = !debugBonusDraft[row][column];
+  renderDebugBonusGrid();
+}
+
+function renderDebugBonusGrid() {
+  const container = document.getElementById("debugBonusGrid");
+  if (!container || !bonusNumbers.length) return;
+  container.innerHTML = "";
+  for (let row = 0; row < 5; row++) {
+    for (let column = 0; column < 5; column++) {
+      const cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = `debug-bonus-cell${debugBonusDraft[row][column] ? " hit" : ""}`;
+      cell.innerText = bonusNumbers[row][column];
+      cell.onclick = () => debugToggleBonusCell(row, column);
+      container.appendChild(cell);
+    }
+  }
+}
+
+function debugResetBonus() {
+  debugBonusDraft = createInitialBonusGrid();
+  renderDebugBonusGrid();
+}
+
 function renderHistory() {
   const container = document.getElementById("historyListContainer");
+  if (!container) return;
   container.innerHTML = "";
 
   pastHistoryData.forEach((roundBalls, idx) => {
@@ -2426,6 +2835,11 @@ function renderHistory() {
     row.appendChild(ballsWrap);
     container.appendChild(row);
   });
+}
+
+function debugStartBonus() {
+  if (gamePhase !== "BETTING" || gameMode !== "NORMAL") return;
+  triggerBonusGame();
 }
 
 function renderFeatureDiagrams() {
@@ -2554,7 +2968,14 @@ function updateUI() {
   document.getElementById("disp-bet").innerText = bet;
   document.getElementById("disp-credit").innerText = credit;
 
-  document.getElementById("btn-bet1").disabled = (bet === 0 || gamePhase !== "BETTING");
+  const isBonus = gameMode === "BONUS";
+  document.getElementById("historyPanelHeader").innerText = isBonus ? "GAME RESULT" : "HISTORY";
+  document.getElementById("colorBonusPanel").style.display = isBonus ? "block" : "none";
+  document.getElementById("historyListContainer").style.display = isBonus ? "none" : "flex";
+
+  document.getElementById("btn-bet1").disabled = (gamePhase !== "BETTING" || (bet === 0 && gameMode !== "BONUS") || bet + 1 > MAX_BET);
+  document.getElementById("btn-bet10").disabled = (gamePhase !== "BETTING" || bet + 10 > MAX_BET || credit < 10);
+  document.getElementById("btn-start").disabled = gamePhase !== "BETTING" || (gameMode === "NORMAL" && bet < 10);
 
   ["move", "special", "green", "yellow", "red"].forEach(cat => {
     let key = cat.toUpperCase();
@@ -2567,7 +2988,9 @@ function updateUI() {
   });
 
   renderFeatureDiagrams();
+  renderRideJackpotFeatures();
   updateSpecialPayout();
+  updateColorBonusDisplay();
 
   let hasSuper = superLineIndices.length > 0;
   let hasHyper = hyperLineIndices.length > 0;
@@ -2594,6 +3017,60 @@ function updateUI() {
       updateBonusReachDisplay();
     }
   });
+}
+
+function renderRideJackpotFeatures() {
+  const featureBoxes = ["move", "special", "green", "yellow", "red"];
+  if (gameMode !== "RIDE") {
+    featureBoxes.forEach(category => {
+      document.getElementById(`feat-${category}`).style.display = "";
+    });
+    document.querySelectorAll(".ride-jackpot-payout").forEach(payout => payout.remove());
+    updateSpecialPayout();
+    return;
+  }
+
+  featureBoxes.forEach(category => {
+    document.getElementById(`feat-${category}`).style.display = "none";
+  });
+
+  const normalJackpotPayout = bet * 50;
+  const showBothJackpots = normalJackpotPayout < 30000;
+  const jackpotBox = document.getElementById("feat-move");
+  const superJackpotBox = document.getElementById("feat-special");
+  jackpotBox.style.display = "flex";
+  superJackpotBox.style.display = showBothJackpots ? "flex" : "none";
+
+  document.getElementById("name-move").innerText = showBothJackpots ? "JACKPOT" : "SUPER JACKPOT";
+  document.getElementById("name-special").innerText = "SUPER JACKPOT";
+  const jackpotDiagram = (color, includeCenter) => {
+    const cells = Array.from({length: 25}, (_, index) => {
+      const row = Math.floor(index / 5);
+      const column = index % 5;
+      const isOuterTarget = (row === 0 && column === 2) || (row === 4 && column === 2) ||
+        (row === 2 && (column === 0 || column === 4));
+      const isCenterTarget = includeCenter && row === 2 && column === 2;
+      return `<div class="f-dot ${isOuterTarget || isCenterTarget ? `on-${color}` : ""}"></div>`;
+    }).join("");
+    return `<div class="f-mini-grid">${cells}</div>`;
+  };
+  document.getElementById("diagram-move").innerHTML = jackpotDiagram("yellow", false);
+  document.getElementById("diagram-special").innerHTML = jackpotDiagram("yellow", true);
+
+  let jackpotPayout = jackpotBox.querySelector(".feature-payout");
+  if (!jackpotPayout) {
+    jackpotPayout = document.createElement("div");
+    jackpotPayout.className = "feature-payout ride-jackpot-payout";
+    jackpotBox.appendChild(jackpotPayout);
+  }
+  let superJackpotPayout = superJackpotBox.querySelector(".feature-payout");
+  if (!superJackpotPayout) {
+    superJackpotPayout = document.createElement("div");
+    superJackpotPayout.className = "feature-payout ride-jackpot-payout";
+    superJackpotBox.appendChild(superJackpotPayout);
+  }
+  jackpotPayout.innerText = `${normalJackpotPayout}`;
+  superJackpotPayout.innerText = "30000";
 }
 
 window.onload = () => {
